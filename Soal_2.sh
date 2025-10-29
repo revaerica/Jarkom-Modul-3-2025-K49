@@ -1,4 +1,4 @@
-# Durin
+q# Durin
 sysctl -w net.ipv4.ip_forward=1
 
 # DHCP Server (Aldarion)
@@ -9,27 +9,36 @@ INTERFACESv6=""
 EOF
 
 cat > /etc/dhcp/dhcpd.conf <<EOF
+authoritative;
+default-lease-time 600;
+max-lease-time 7200;
+option domain-name-servers 10.88.1.3, 192.168.122.1;
+
 subnet 10.88.1.0 netmask 255.255.255.0 {
     range 10.88.1.6 10.88.1.34;
     range 10.88.1.68 10.88.1.94;
     option routers 10.88.1.1;
     option broadcast-address 10.88.1.255;
-    
-    default-lease-time 600;
-    max-lease-time 7200;
 }
+
 subnet 10.88.2.0 netmask 255.255.255.0 {
     range 10.88.2.35 10.88.2.67;
     range 10.88.2.96 10.88.2.121;
     option routers 10.88.2.1;
     option broadcast-address 10.88.2.255;
-    
-    default-lease-time 600;
-    max-lease-time 7200;
 }
-host Khamul {
-    hardware ethernet 02:42:92:bc:4c:00;
-    fixed-address 10.88.3.95;
+
+subnet 10.88.3.0 netmask 255.255.255.0 {
+    option routers 10.88.3.1;
+    option broadcast-address 10.88.3.255;
+    host Khamul {
+        hardware ethernet 02:42:92:bc:4c:00;
+        fixed-address 10.88.3.95;
+    }
+}
+
+subnet 10.88.4.0 netmask 255.255.255.0 {
+    option routers 10.88.4.1;
 }
 EOF
 
