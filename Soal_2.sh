@@ -1,3 +1,6 @@
+# Durin
+sysctl -w net.ipv4.ip_forward=1
+
 # DHCP Server (Aldarion)
 apt-get update && apt-get install isc-dhcp-server -y
 cat > /etc/default/isc-dhcp-server <<EOF
