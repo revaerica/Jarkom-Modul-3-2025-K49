@@ -29,6 +29,8 @@
 
 ## Soal 1
 
+<img width="820" height="785" alt="image" src="https://github.com/user-attachments/assets/4ffb07ab-6bc6-48b9-a419-5ba6642bda47" />
+
 ## Soal 2
 
 ## Soal 3
