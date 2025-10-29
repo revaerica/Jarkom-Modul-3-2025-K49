@@ -63,9 +63,12 @@ sysctl -p
 service isc-dhcp-relay restart
 
 # Khamul (Fixed-Address)
-cat > /etc/network/interfaces << EOF
-hwaddress ether 02:42:92:bc:4c:00
-EOF
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+
+apt-get update
+apt-get install isc-dhcp-client -y
+
+dhclient eth0
 
 ip a
 cat /etc/default/isc-dhcp-server | grep INTERFACES
