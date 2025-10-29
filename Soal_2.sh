@@ -2,6 +2,10 @@
 sysctl -w net.ipv4.ip_forward=1
 
 # DHCP Server (Aldarion)
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+
+ping -c 3 google.com
+
 apt-get update && apt-get install isc-dhcp-server -y
 cat > /etc/default/isc-dhcp-server <<EOF
 INTERFACESv4="eth0"
