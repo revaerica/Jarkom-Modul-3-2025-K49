@@ -1,4 +1,4 @@
-q# Durin
+# Durin
 sysctl -w net.ipv4.ip_forward=1
 
 # DHCP Server (Aldarion)
