@@ -4,7 +4,8 @@ sysctl -w net.ipv4.ip_forward=1
 # DHCP Server (Aldarion)
 apt-get update && apt-get install isc-dhcp-server -y
 cat > /etc/default/isc-dhcp-server <<EOF
-INTERFACES="eth0"
+INTERFACESv4="eth0"
+INTERFACESv6=""
 EOF
 
 cat > /etc/dhcp/dhcpd.conf <<EOF
