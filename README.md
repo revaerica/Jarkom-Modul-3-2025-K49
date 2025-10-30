@@ -31,6 +31,42 @@
 
 <img width="820" height="785" alt="image" src="https://github.com/user-attachments/assets/4ffb07ab-6bc6-48b9-a419-5ba6642bda47" />
 
+Durin
+```
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+	address 10.88.1.1
+	netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+	address 10.88.2.1
+	netmask 255.255.255.0
+
+auto eth3
+iface eth3 inet static
+	address 10.88.3.1
+	netmask 255.255.255.0
+
+auto eth4
+iface eth4 inet static
+	address 10.88.4.1
+	netmask 255.255.255.0
+
+auto eth5
+iface eth5 inet static
+	address 10.88.5.1
+	netmask 255.255.255.0
+
+up apt update -y && apt install iptables -y
+up apt-get update && apt-get install isc-dhcp-relay -y
+up iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.88.0.0/16
+up service isc-dhcp-relay start
+```
+
 ## Soal 2
 
 ## Soal 3
