@@ -31,7 +31,7 @@
 
 <img width="820" height="785" alt="image" src="https://github.com/user-attachments/assets/4ffb07ab-6bc6-48b9-a419-5ba6642bda47" />
 
-Durin
+**Durin**
 ```
 auto eth0
 iface eth0 inet dhcp
@@ -61,207 +61,17 @@ iface eth5 inet static
 	address 10.88.5.1
 	netmask 255.255.255.0
 
-up apt update -y && apt install iptables -y
-up apt-get update && apt-get install isc-dhcp-relay -y
+up apt-get update -y
+up apt-get install iptables isc-dhcp-relay -y
 up iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.88.0.0/16
-up service isc-dhcp-relay start
+up sysctl net.ipv4.ip_forward=1
+up echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
+up sed -i 's/^#DHCP_SERVERS=""/DHCP_SERVERS="10.88.4.2"/' /etc/default/isc-dhcp-relay
+up sed -i 's/^#INTERFACES=""/INTERFACES="eth1 eth2 eth3 eth4 eth5"/' /etc/default/isc-dhcp-relay
+up service isc-dhcp-relay restart
 ```
 
-Galadriel
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.2.6
-	netmask 255.255.255.0
-	gateway 10.88.2.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Celebron
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.2.5
-	netmask 255.255.255.0
-	gateway 10.88.2.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Oropher
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.2.4
-	netmask 255.255.255.0
-	gateway 10.88.2.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Gilgalad
-```
-auto eth0
-iface eth0 inet dhcp
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Celebrimbor
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.2.3
-	netmask 255.255.255.0
-	gateway 10.88.2.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Pharazon
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.2.2
-	netmask 255.255.255.0
-	gateway 10.88.2.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Minastir
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.5.2
-	netmask 255.255.255.0
-	gateway 10.88.5.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Narvi
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.4.4
-	netmask 255.255.255.0
-	gateway 10.88.4.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Palantir
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.4.3
-	netmask 255.255.255.0
-	gateway 10.88.4.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Aldarion
-```
-auto eth0
-iface eth0 inet static
-    address 10.88.4.2
-    netmask 255.255.255.0
-    gateway 10.88.4.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-up apt-get update && apt-get install isc-dhcp-server -y
-```
-
-Andir
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.3.3
-	netmask 255.255.255.0
-	gateway 10.88.3.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Erendis
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.3.2
-	netmask 255.255.255.0
-	gateway 10.88.3.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-up apt-get update && apt-get install ifupdown -y && apt-get install bind9 -y
-up ln -s /etc/init.d/named /etc/init.d/bind9
-up mkdir -p /etc/bind/K49
-```
-
-Khamul
-```
-auto lo
-iface lo inet loopback
-
-auto eth0
-iface eth0 inet dhcp
-```
-
-Elros
-```
-auto eth0
-iface eth0 inet static
-    address 10.88.1.10 
-    netmask 255.255.255.0
-    gateway 10.88.1.1
-
-up echo "nameserver 192.168.122.1" > /etc/resolv.conf
-```
-
-Amandi
-```
-auto eth0
-iface eth0 inet dhcp
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Miriel
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.1.5
-	netmask 255.255.255.0
-	gateway 10.88.1.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Anarion
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.1.4
-	netmask 255.255.255.0
-	gateway 10.88.1.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Isildur
-```
-auto eth0
-iface eth0 inet static
-	address 10.88.1.3
-	netmask 255.255.255.0
-	gateway 10.88.1.1
-
-up echo nameserver 192.168.122.1 > /etc/resolv.conf
-```
-
-Elendil
+**Elendil**
 ```
 auto eth0
 iface eth0 inet static
@@ -270,6 +80,228 @@ iface eth0 inet static
 	gateway 10.88.1.1
 
 up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update
+up apt-get install nginx php8.4-fpm composer -y
+```
+
+**Isildur**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.1.3
+	netmask 255.255.255.0
+	gateway 10.88.1.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update
+up apt-get install nginx php8.4-fpm composer -y
+```
+
+**Anarion**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.1.4
+	netmask 255.255.255.0
+	gateway 10.88.1.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update
+up apt-get install nginx php8.4-fpm composer -y
+```
+
+**Miriel**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.1.5
+	netmask 255.255.255.0
+	gateway 10.88.1.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install lynx curl -y
+```
+
+**Celebrimbor**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.3
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install lynx curl -y
+```
+
+**Elros**
+```
+auto eth0
+iface eth0 inet static
+    address 10.88.1.10 
+    netmask 255.255.255.0
+    gateway 10.88.1.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update
+up apt-get install nginx apache2-utils lynx curl -y
+```
+
+**Pharazon**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.2
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update
+up apt-get install nginx apache2-utils lynx curl -y
+```
+
+**Galadriel**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.6
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update
+up apt-get install nginx php8.4-fpm -y
+```
+
+**Celeborn**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.5
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update
+up apt-get install nginx php8.4-fpm -y
+```
+
+**Oropher**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.4
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update
+up apt-get install nginx php8.4-fpm -y
+```
+
+**Erendis**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.3.2
+	netmask 255.255.255.0
+	gateway 10.88.3.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install bind9 -y
+up ln -s /etc/init.d/named /etc/init.d/bind9
+up mkdir -p /etc/bind/jarkomK49
+```
+
+**Amdir**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.3.3
+	netmask 255.255.255.0
+	gateway 10.88.3.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install bind9 -y
+up ln -s /etc/init.d/named /etc/init.d/bind9
+```
+
+**Aldarion**
+```
+auto eth0
+iface eth0 inet static
+    address 10.88.4.2
+    netmask 255.255.255.0
+    gateway 10.88.4.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install isc-dhcp-server -y
+```
+
+**Palantir**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.4.3
+	netmask 255.255.255.0
+	gateway 10.88.4.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install mariadb-server -y
+```
+
+**Narvi**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.4.4
+	netmask 255.255.255.0
+	gateway 10.88.4.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install mariadb-server -y
+```
+
+**Minastir**
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.5.2
+	netmask 255.255.255.0
+	gateway 10.88.5.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install bind9 nginx -y
+```
+
+**Gilgalad**
+```
+auto eth0
+iface eth0 inet dhcp
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install lynx curl -y
+```
+
+**Amandil**
+```
+auto eth0
+iface eth0 inet dhcp
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install lynx curl -y
+```
+
+**Khamul**
+```
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install lynx curl -y
 ```
 
 ## Soal 2
