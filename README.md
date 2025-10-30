@@ -67,6 +67,147 @@ up iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.88.0.0/16
 up service isc-dhcp-relay start
 ```
 
+Galadriel
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.6
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Celebron
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.5
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Oropher
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.4
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Gilgalad
+```
+auto eth0
+iface eth0 inet dhcp
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Celebrimbor
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.3
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Pharazon
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.2.2
+	netmask 255.255.255.0
+	gateway 10.88.2.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Minastir
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.5.2
+	netmask 255.255.255.0
+	gateway 10.88.5.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Narvi
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.4.4
+	netmask 255.255.255.0
+	gateway 10.88.4.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Palantir
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.4.3
+	netmask 255.255.255.0
+	gateway 10.88.4.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Aldarion
+```
+auto eth0
+iface eth0 inet static
+    address 10.88.4.2
+    netmask 255.255.255.0
+    gateway 10.88.4.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install isc-dhcp-server -y
+```
+
+Andir
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.3.3
+	netmask 255.255.255.0
+	gateway 10.88.3.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Erendis
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.3.2
+	netmask 255.255.255.0
+	gateway 10.88.3.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update && apt-get install ifupdown -y && apt-get install bind9 -y
+up ln -s /etc/init.d/named /etc/init.d/bind9
+up mkdir -p /etc/bind/K49
+```
+
+Khamul
+```
+auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+```
 ## Soal 2
 
 ## Soal 3
