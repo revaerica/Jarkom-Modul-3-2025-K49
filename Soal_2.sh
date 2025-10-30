@@ -1,13 +1,4 @@
-# Durin
-sysctl -w net.ipv4.ip_forward=1
-
 # DHCP Server (Aldarion)
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
-
-ping -c 3 google.com
-
-apt-get update && apt-get install isc-dhcp-server -y
-
 cat > /etc/default/isc-dhcp-server <<EOF
 INTERFACESv4="eth0"
 INTERFACESv6=""
@@ -64,15 +55,12 @@ sysctl -p
 service isc-dhcp-relay restart
 
 # Khamul (Fixed-Address)
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
+cat > /etc/network/interfaces << EOF
+hwaddress ether 02:42:92:bc:4c:00
+EOF
 
-apt-get update
-apt-get install isc-dhcp-client -y
+ip a | grep 10.88.3.95
 
-dhclient eth0
-
-ip a
-cat /etc/default/isc-dhcp-server | grep INTERFACES
-dhcpd -t -4
-tail -n 20 /var/log/syslog | grep dhcp
+# Cek di DHCP-Client (Gilgalad & Amandil)
+ip a | grep 10.88
 
