@@ -208,6 +208,70 @@ iface lo inet loopback
 auto eth0
 iface eth0 inet dhcp
 ```
+
+Elros
+```
+auto eth0
+iface eth0 inet static
+    address 10.88.1.10 
+    netmask 255.255.255.0
+    gateway 10.88.1.1
+
+up echo "nameserver 192.168.122.1" > /etc/resolv.conf
+```
+
+Amandi
+```
+auto eth0
+iface eth0 inet dhcp
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Miriel
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.1.5
+	netmask 255.255.255.0
+	gateway 10.88.1.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Anarion
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.1.4
+	netmask 255.255.255.0
+	gateway 10.88.1.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Isildur
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.1.3
+	netmask 255.255.255.0
+	gateway 10.88.1.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
+Elendil
+```
+auto eth0
+iface eth0 inet static
+	address 10.88.1.2
+	netmask 255.255.255.0
+	gateway 10.88.1.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+
 ## Soal 2
 
 ## Soal 3
