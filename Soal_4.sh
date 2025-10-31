@@ -195,5 +195,12 @@ service php8.4-fpm status
 service nginx status
 
 # Gilgalad atai Amandil
+cat > /etc/resolv.conf <<EOF
+nameserver 10.88.3.2
+nameserver 10.88.3.3 
+nameserver 10.88.5.2
+nameserver 192.168.122.1
+EOF
+
 curl numenor-web.jarkomK49.com
 curl laravel-web.jarkomK49.com/api/item
