@@ -131,12 +131,17 @@ server {
     listen 80;
     server_name numenor-web.jarkomK49.com www.jarkomK49.com;
 
+    # PENTING: TAMBAHKAN DUA BARIS INI
+    keepalive_timeout 0;
+    proxy_http_version 1.1;
+    # ===============================
+
     location / {
         proxy_pass http://php_workers;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
         proxy_set_header Connection "";
     }
 }
