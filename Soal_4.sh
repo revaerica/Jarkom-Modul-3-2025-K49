@@ -68,6 +68,12 @@ $TTL 604800
 3       IN PTR Palantir.jarkomK49.com.
 EOF
 
+named-checkzone jarkomK49.com /etc/bind/K49/jarkomK49.com
+named-checkzone 1.88.10.in-addr.arpa /etc/bind/K49/1.88.10.in-addr.arpa
+named-checkzone 2.88.10.in-addr.arpa /etc/bind/K49/2.88.10.in-addr.arpa
+named-checkzone 3.88.10.in-addr.arpa /etc/bind/K49/3.88.10.in-addr.arpa
+named-checkzone 4.88.10.in-addr.arpa /etc/bind/K49/4.88.10.in-addr.arpa
+
 pkill named
 /usr/sbin/named
 
