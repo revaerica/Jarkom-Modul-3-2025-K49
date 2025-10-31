@@ -120,27 +120,22 @@ service nginx status
 echo "nameserver 192.168.122.1" > /etc/resolv.conf
 apt-get update && apt-get install nginx -y
 
-cat > /etc/nginx/sites-available/numenor-web <<EOF
+cat > /etc/nginx/sites-available/numenor-web <<'EOF'
 upstream php_workers {
-    server 10.88.2.2 max_fails=3 fail_timeout=3s;
-    server 10.88.2.3 max_fails=3 fail_timeout=3s;
-    server 10.88.2.4 max_fails=3 fail_timeout=3s;
+    server 10.88.2.2;
+    server 10.88.2.3;
+    server 10.88.2.4;
 }
 
 server {
     listen 80;
     server_name numenor-web.jarkomK49.com www.jarkomK49.com;
 
-    keepalive_timeout 0;
-    proxy_http_version 1.1;
-
     location / {
         proxy_pass http://php_workers;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-
-        proxy_set_header Connection "";
     }
 }
 EOF
@@ -148,8 +143,8 @@ EOF
 ln -s /etc/nginx/sites-available/numenor-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
+nginx -t
 service nginx restart
-
 service nginx status
 
 # Elendil, Isildur, Anarion
