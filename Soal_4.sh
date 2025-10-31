@@ -97,9 +97,10 @@ apt-get update && apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/numenor-web <<EOF
 upstream php_workers {
-    server 10.88.2.2;  # Galadriel
-    server 10.88.2.3;  # Celeborn
-    server 10.88.2.4;  # Oropher
+    least_conn; # Tambahkan directive ini
+    server 10.88.2.2;
+    server 10.88.2.3;
+    server 10.88.2.4;  
 }
 
 server {
@@ -194,6 +195,9 @@ EOF
 
 ln -s /etc/nginx/sites-available/numenor-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
+
+chown -R www-data:www-data /var/www/laravel-web/storage
+chown -R www-data:www-data /var/www/laravel-web/bootstrap/cach
 
 service php8.4-fpm restart
 service nginx restart
