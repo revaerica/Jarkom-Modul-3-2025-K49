@@ -213,6 +213,10 @@ iface eth0 inet static
 	address 10.88.5.2
 	netmask 255.255.255.0
 	gateway 10.88.5.1
+
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
+up apt-get update
+up apt-get install bind9 nginx -y
 ```
 
 **Gilgalad**
