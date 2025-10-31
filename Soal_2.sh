@@ -54,7 +54,7 @@ service isc-dhcp-server restart
 # DHCP Relay (Durin/Router)
 cat > /etc/default/isc-dhcp-relay << EOF
 SERVERS="10.88.4.2"  
-INTERFACES="eth1 eth2 eth3 eth4"
+INTERFACES="eth1 eth2 eth3 eth4 eth5"
 OPTIONS=""
 EOF
 
