@@ -64,7 +64,7 @@ EOF
 cat > /etc/bind/K49/jarkomK49.com <<'EOF'
 $TTL 604800
 @       IN SOA jarkomK49.com. root.jarkomK49.com. (
-            2025110103 ; Serial (Wajib Naikkan jika ada perubahan)
+            2025110103 ; Serial
             604800     ; Refresh
             86400      ; Retry
             2419200    ; Expire
