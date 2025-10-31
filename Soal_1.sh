@@ -1,5 +1,4 @@
 # Durin
-
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.88.0.0/16
 iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
 iptables -A FORWARD -i eth2 -o eth0 -j ACCEPT
@@ -23,13 +22,14 @@ service isc-dhcp-relay restart
 # Gilgalad dan Amandil
 ip addr add 10.88.1.100/24 dev eth0
 ip link set eth0 up
-
 ip route add default via 10.88.1.1
 
 echo nameserver 192.168.122.1 > /etc/resolv.conf
 
+apt-get update
+apt-get install isc-dhcp-client -y
+
 ping -c 3 10.88.1.1     
 ping -c 3 192.168.122.1 
 
-apt-get update
-apt-get install isc-dhcp-client -y
+echo nameserver 10.88.5.2 > /etc/resolv.conf
