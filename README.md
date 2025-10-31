@@ -66,9 +66,9 @@ up apt-get install iptables isc-dhcp-relay -y
 up iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.88.0.0/16
 up sysctl net.ipv4.ip_forward=1
 up echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
-up sed -i 's/^#DHCP_SERVERS=""/DHCP_SERVERS="10.88.4.2"/' /etc/default/isc-dhcp-relay
-up sed -i 's/^#INTERFACES=""/INTERFACES="eth1 eth2 eth3 eth4 eth5"/' /etc/default/isc-dhcp-relay
 up service isc-dhcp-relay restart
+# DHCP_SERVERS="10.88.4.2"
+# INTERFACES="eth1 eth2 eth3 eth4 eth5"
 ```
 
 **Elendil**
