@@ -132,7 +132,7 @@ server {
     server_name numenor-web.jarkomK49.com www.jarkomK49.com;
 
     keepalive_timeout 0;
-    proxy_http_version 1.1;
+    proxy_http_version 1.1;
 
     location / {
         proxy_pass http://php_workers;
