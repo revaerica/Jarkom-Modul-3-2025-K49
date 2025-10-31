@@ -77,6 +77,9 @@ named-checkzone 4.88.10.in-addr.arpa /etc/bind/K49/4.88.10.in-addr.arpa
 pkill named
 /usr/sbin/named
 
+# Di Amdir 
+service bind9 restart
+
 # Elros
 echo "nameserver 192.168.122.1" > /etc/resolv.conf
 apt-get update
