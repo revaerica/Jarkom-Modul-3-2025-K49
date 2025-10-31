@@ -1,11 +1,7 @@
 # DHCP Server (Aldarion)
-ip addr flush dev eth0
-ip addr add 10.88.4.2/24 dev eth0
-ip route add default via 10.88.4.1
-
+apt-get update && apt-get install isc-dhcp-server -y
 cat > /etc/default/isc-dhcp-server <<EOF
-INTERFACESv4="eth0"
-INTERFACESv6=""
+INTERFACES="eth0"
 EOF
 
 cat > /etc/dhcp/dhcpd.conf <<EOF
@@ -62,11 +58,7 @@ EOF
 sysctl -p
 service isc-dhcp-relay restart
 
-# Khamul (Fixed-Address)
-ip addr flush dev eth0
-ip addr add 10.88.3.95/24 dev eth0
-ip route add default via 10.88.3.1
-
+# Cek Khamul (Fixed-Address)
 ip a | grep 10.88.3.95
 
 # di Aldarion dan Durin
