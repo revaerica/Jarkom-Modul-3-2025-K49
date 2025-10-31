@@ -242,6 +242,12 @@ iface eth0 inet dhcp
 hwaddress ether 02:42:92:bc:4c:00
 ```
 
+Amandil
+<img width="1725" height="1228" alt="image" src="https://github.com/user-attachments/assets/8d072242-1380-4771-8e7f-342f4a8edbd9" />
+
+Gilgalad
+<img width="1375" height="1225" alt="image" src="https://github.com/user-attachments/assets/1ed86e50-357f-4483-baee-6d1169559bf8" />
+
 ## Soal 2
 
 Aldarion
