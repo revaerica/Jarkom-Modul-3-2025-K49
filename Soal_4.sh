@@ -1,3 +1,65 @@
+# Erendis
+sed -i '/www\s\+IN\s\+CNAME\s\+numenor-web/a\
+\
+Elros\tIN\tTXT\t"Cincin Sauron"\
+Pharazon\tIN\tTXT\t"Aliansi Terakhir"' /etc/bind/K49/jarkomK49.com
+
+# Menambahkan A Records yang hilang (jika belum ada di file Anda)
+sed -i '/Elros\s\+IN\s\+A\s\+10.88.1.35/a\
+numenor-web\tIN\tA\t10.88.2.6\
+laravel-web\tIN\tA\t10.88.1.35' /etc/bind/K49/jarkomK49.com
+
+# Tambahkan ke /etc/bind/named.conf.local
+zone "1.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/1.88.10.in-addr.arpa"; };
+zone "2.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/2.88.10.in-addr.arpa"; };
+zone "3.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/3.88.10.in-addr.arpa"; };
+zone "4.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/4.88.10.in-addr.arpa"; };
+EOF
+
+cat > /etc/bind/K49/1.88.10.in-addr.arpa <<'EOF'
+$TTL 604800
+@       IN SOA ns1.jarkomK49.com. root.jarkomK49.com. ( 2025110105 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 604800 )
+@       IN NS ns1.jarkomK49.com.
+@       IN NS ns2.jarkomK49.com.
+35      IN PTR Elros.jarkomK49.com.
+2       IN PTR Elendil.jarkomK49.com.
+3       IN PTR Isildur.jarkomK49.com.
+4       IN PTR Anarion.jarkomK49.com.
+EOF
+
+cat > /etc/bind/K49/2.88.10.in-addr.arpa <<'EOF'
+$TTL 604800
+@       IN SOA ns1.jarkomK49.com. root.jarkomK49.com. ( 2025110105 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 604800 )
+@       IN NS ns1.jarkomK49.com.
+@       IN NS ns2.jarkomK49.com.
+6       IN PTR Pharazon.jarkomK49.com.
+2       IN PTR Galadriel.jarkomK49.com.
+3       IN PTR Celeborn.jarkomK49.com.
+4       IN PTR Oropher.jarkomK49.com.
+EOF
+
+# Buat Zone File 10.88.3.X (DNS)
+cat > /etc/bind/K49/3.88.10.in-addr.arpa <<'EOF'
+$TTL 604800
+@       IN SOA ns1.jarkomK49.com. root.jarkomK49.com. ( 2025110105 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 604800 )
+@       IN NS ns1.jarkomK49.com.
+@       IN NS ns2.jarkomK49.com.
+2       IN PTR ns1.jarkomK49.com.
+3       IN PTR ns2.jarkomK49.com.
+EOF
+
+# Buat Zone File 10.88.4.X (Palantir)
+cat > /etc/bind/K49/4.88.10.in-addr.arpa <<'EOF'
+$TTL 604800
+@       IN SOA ns1.jarkomK49.com. root.jarkomK49.com. ( 2025110105 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 604800 )
+@       IN NS ns1.jarkomK49.com.
+@       IN NS ns2.jarkomK49.com.
+3       IN PTR Palantir.jarkomK49.com.
+EOF
+
+pkill named
+/usr/sbin/named
+
 # Elros
 echo "nameserver 192.168.122.1" > /etc/resolv.conf
 apt-get update
