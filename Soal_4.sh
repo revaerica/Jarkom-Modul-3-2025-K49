@@ -126,9 +126,16 @@ service nginx status
 echo "nameserver 192.168.122.1" > /etc/resolv.conf
 apt-get update
 apt-get install nginx php8.4-fpm php8.4-curl php8.4-mbstring php8.4-xml php8.4-mysql git -y
+apt-get install -y composer
 
 cd /var/www/
 git clone https://github.com/elshiraphine/laravel-simple-rest-api laravel-web
+chown -R www-data:www-data /var/www/laravel-web/
+
+cd laravel-web/
+composer install --no-dev
+cp .env.example .env
+php artisan key:generate
 chown -R www-data:www-data /var/www/laravel-web/
 
 cat > /etc/nginx/sites-available/laravel-web <<EOF
