@@ -244,6 +244,18 @@ hwaddress ether 02:42:92:bc:4c:00
 
 ## Soal 2
 
+Aldarion
+<img width="1254" height="1225" alt="image" src="https://github.com/user-attachments/assets/1886d9f2-8757-423f-94e7-04db696060ee" />
+
+Durin
+<img width="1116" height="1220" alt="image" src="https://github.com/user-attachments/assets/922dc6ee-bb03-4d47-9a97-5a9aa0a00197" />
+
+Khamul
+<img width="837" height="257" alt="image" src="https://github.com/user-attachments/assets/2f3be5a2-377a-467a-945d-e015854ee7dc" />
+
+Gilgalad
+<img width="837" height="239" alt="image" src="https://github.com/user-attachments/assets/541f04f3-8571-4655-a716-a9335e9d4d37" />
+
 ## Soal 3
 
 ## Soal 4
