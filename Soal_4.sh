@@ -13,7 +13,6 @@ zone "1.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; 
 zone "2.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/2.88.10.in-addr.arpa"; };
 zone "3.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/3.88.10.in-addr.arpa"; };
 zone "4.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/4.88.10.in-addr.arpa"; };
-EOF
 
 cat > /etc/bind/K49/1.88.10.in-addr.arpa <<'EOF'
 $TTL 604800
