@@ -263,6 +263,14 @@ Gilgalad
 <img width="837" height="239" alt="image" src="https://github.com/user-attachments/assets/541f04f3-8571-4655-a716-a9335e9d4d37" />
 
 ## Soal 3
+Minastri
+<img width="1069" height="403" alt="image" src="https://github.com/user-attachments/assets/22d0f539-da4f-4e1a-8e56-80f98a2f552d" />
+
+Erendis
+<img width="1152" height="702" alt="image" src="https://github.com/user-attachments/assets/48029902-9fd7-4cbd-8b8e-91c6c3a110bd" />
+
+Amdir
+
 
 ## Soal 4
 
