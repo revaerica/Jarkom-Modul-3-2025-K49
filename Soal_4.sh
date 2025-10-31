@@ -97,10 +97,9 @@ apt-get update && apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/numenor-web <<EOF
 upstream php_workers {
-    least_conn; # Tambahkan directive ini
-    server 10.88.2.2;
-    server 10.88.2.3;
-    server 10.88.2.4;  
+    server 10.88.2.2 max_fails=3 fail_timeout=3s;
+    server 10.88.2.3 max_fails=3 fail_timeout=3s;
+    server 10.88.2.4 max_fails=3 fail_timeout=3s;
 }
 
 server {
@@ -112,6 +111,8 @@ server {
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        
+        proxy_set_header Connection "";
     }
 }
 EOF
@@ -134,7 +135,8 @@ git clone https://github.com/elshiraphine/laravel-simple-rest-api laravel-web
 chown -R www-data:www-data /var/www/laravel-web/
 
 cd laravel-web/
-composer install --no-dev
+rm composer.lock
+composer update --no-dev
 cp .env.example .env
 php artisan key:generate
 chown -R www-data:www-data /var/www/laravel-web/
