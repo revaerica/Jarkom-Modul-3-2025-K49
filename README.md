@@ -270,7 +270,10 @@ Erendis
 <img width="1152" height="702" alt="image" src="https://github.com/user-attachments/assets/48029902-9fd7-4cbd-8b8e-91c6c3a110bd" />
 
 Amdir
+<img width="1095" height="680" alt="image" src="https://github.com/user-attachments/assets/76ec6d2f-989e-4d3f-aea0-bc63b976ffd6" />
 
+Gilgalad/Amandil
+<img width="917" height="1002" alt="image" src="https://github.com/user-attachments/assets/f66abd31-dc2a-428c-a56c-a12649abc835" />
 
 ## Soal 4
 
