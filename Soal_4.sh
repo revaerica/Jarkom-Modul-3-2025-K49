@@ -207,6 +207,18 @@ service nginx restart
 service php8.4-fpm status
 service nginx status
 
+# galadriel
+echo "10.88.2.2 Galadriel" >> /etc/hosts
+service php8.4-fpm restart
+
+# celeborn
+echo "10.88.2.3 Celeborn" >> /etc/hosts
+service php8.4-fpm restart
+
+# Oropher
+echo "10.88.2.4 Oropher" >> /etc/hosts
+service php8.4-fpm restart
+
 # Gilgalad atai Amandil
 cat > /etc/resolv.conf <<EOF
 nameserver 10.88.3.2
