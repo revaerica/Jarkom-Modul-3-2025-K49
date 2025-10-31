@@ -300,6 +300,8 @@ iface lo inet loopback
 auto eth0
 iface eth0 inet dhcp
 
+hwaddress ether 02:42:92:bc:4c:00
+
 up echo nameserver 192.168.122.1 > /etc/resolv.conf
 up apt-get update && apt-get install lynx curl -y
 ```
