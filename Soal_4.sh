@@ -160,6 +160,9 @@ EOF
 ln -s /etc/nginx/sites-available/laravel-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
+chown -R www-data:www-data /var/www/laravel-web/storage
+chown -R www-data:www-data /var/www/laravel-web/bootstrap/cach
+
 service php8.4-fpm restart
 service nginx restart
 
@@ -195,9 +198,6 @@ EOF
 
 ln -s /etc/nginx/sites-available/numenor-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
-
-chown -R www-data:www-data /var/www/laravel-web/storage
-chown -R www-data:www-data /var/www/laravel-web/bootstrap/cach
 
 service php8.4-fpm restart
 service nginx restart
