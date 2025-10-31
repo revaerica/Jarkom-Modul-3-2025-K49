@@ -27,10 +27,8 @@ EOF
 ln -s /etc/nginx/sites-available/laravel-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
-service php8.4-fpm restart
 service nginx restart
 
-service php8.4-fpm status
 service nginx status
 
 # Pharazon
