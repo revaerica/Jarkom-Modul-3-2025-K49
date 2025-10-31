@@ -4,7 +4,6 @@ sed -i '/www\s\+IN\s\+CNAME\s\+numenor-web/a\
 Elros\tIN\tTXT\t"Cincin Sauron"\
 Pharazon\tIN\tTXT\t"Aliansi Terakhir"' /etc/bind/K49/jarkomK49.com
 
-# Menambahkan A Records yang hilang (jika belum ada di file Anda)
 sed -i '/Elros\s\+IN\s\+A\s\+10.88.1.35/a\
 numenor-web\tIN\tA\t10.88.2.6\
 laravel-web\tIN\tA\t10.88.1.35' /etc/bind/K49/jarkomK49.com
