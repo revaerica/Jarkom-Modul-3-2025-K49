@@ -78,6 +78,9 @@ pkill named
 /usr/sbin/named
 
 # Di Amdir 
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+apt-get update
+apt-get install bind9 dnsutils -y
 service bind9 restart
 
 # Elros
