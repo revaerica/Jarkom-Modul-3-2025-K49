@@ -1,5 +1,8 @@
 # Elros
-apt-get update && apt-get install nginx -y
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+apt-get update
+apt-get install -y systemd
+apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/laravel-web <<EOF
 upstream laravel_workers {
@@ -23,9 +26,15 @@ EOF
 
 ln -s /etc/nginx/sites-available/laravel-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
-systemctl restart nginx
+
+service php8.4-fpm restart
+service nginx restart
+
+service php8.4-fpm status
+service nginx status
 
 # Pharazon
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
 apt-get update && apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/numenor-web <<EOF
@@ -50,9 +59,15 @@ EOF
 
 ln -s /etc/nginx/sites-available/numenor-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
-systemctl restart nginx
+
+service php8.4-fpm restart
+service nginx restart
+
+service php8.4-fpm status
+service nginx status
 
 # Elendil, Isildur, Anarion
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
 apt-get update
 apt-get install nginx php8.4-fpm php8.4-curl php8.4-mbstring php8.4-xml php8.4-mysql git -y
 
@@ -81,10 +96,14 @@ EOF
 ln -s /etc/nginx/sites-available/laravel-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
-systemctl restart php8.4-fpm
-systemctl restart nginx
+service php8.4-fpm restart
+service nginx restart
+
+service php8.4-fpm status
+service nginx status
 
 # Galadriel, Celeborn, Oropher
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
 apt-get update
 apt-get install nginx php8.4-fpm -y
 
@@ -113,8 +132,11 @@ EOF
 ln -s /etc/nginx/sites-available/numenor-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
-systemctl restart php8.4-fpm
-systemctl restart nginx
+service php8.4-fpm restart
+service nginx restart
+
+service php8.4-fpm status
+service nginx status
 
 # Gilgalad atai Amandil
 curl numenor-web.jarkomK49.com
