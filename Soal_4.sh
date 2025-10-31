@@ -1,76 +1,121 @@
-# Erendis ( ns1 / master )
-cat > /etc/bind/named.conf.local <<'EOF'
-zone "K49.com" {
-    type master;
-    notify yes;
-    also-notify { 10.88.3.3; };      // IP Amdir (ns2)
-    allow-transfer { 10.88.3.3; };
-    file "/etc/bind/K49/K49.com";
-};
+# Elros
+apt-get update && apt-get install nginx -y
 
-zone "3.88.10.in-addr.arpa" {
-    type master;
-    notify yes;
-    also-notify { 10.88.3.3; };       // IP Valmar (ns2)
-    allow-transfer { 10.88.3.3; };
-    file "/etc/bind/K49/3.88.10.in-addr.arpa";
-};
+cat > /etc/nginx/sites-available/laravel-web <<EOF
+upstream laravel_workers {
+    server 10.88.1.2;  # Elendil
+    server 10.88.1.3;  # Isildur
+    server 10.88.1.4;  # Anarion
+}
+
+server {
+    listen 80;
+    server_name laravel-web.jarkomK49.com;
+
+    location / {
+        proxy_pass http://laravel_workers;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    }
+}
 EOF
 
-cat > /etc/bind/K49/K49.com <<'EOF'
-$TTL 604800
-@       IN SOA jarkomK49.com. root.K49.com. (
-            2025101302 ; Serial YYYYMMDDXX
-            604800     ; Refresh 1 minggu
-            86400      ; Retry 1 hari
-            2419200    ; Expire 4 minggu
-            604800 )   ; Negative Cache TTL
+ln -s /etc/nginx/sites-available/laravel-web /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+systemctl restart nginx
 
-@         IN NS ns1.jarkomK49.com.
-@         IN NS ns2.jarkomK49.com.
-@         IN A 10.88.3.2
+# Pharazon
+apt-get update && apt-get install nginx -y
 
-ns1       IN A 10.88.3.2
-ns2       IN A 10.88.3.3
-Palantir  IN A 10.88.4.3
-Elros     IN A 10.88.1.35
-Pharazon  IN A 10.88.2.6
-Elendil   IN A 10.88.1.2
-Isildur   IN A 10.88.1.3
-Anarion   IN A 10.88.1.4
-Galadriel IN A 10.88.2.2
-Celeborn  IN A 10.88.2.3
-Oropher   IN A 10.88.2.4
+cat > /etc/nginx/sites-available/numenor-web <<EOF
+upstream php_workers {
+    server 10.88.2.2;  # Galadriel
+    server 10.88.2.3;  # Celeborn
+    server 10.88.2.4;  # Oropher
+}
 
-www       IN CNAME jarkomK49.com.
+server {
+    listen 80;
+    server_name numenor-web.jarkomK49.com www.jarkomK49.com;
 
-Elros     IN TXT "Cincin Sauron"
-Pharazon  IN TXT "Aliansi Terakhir"
+    location / {
+        proxy_pass http://php_workers;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    }
+}
 EOF
 
-cat > /etc/bind/K49/3.88.10.in-addr.arpa <<'EOF'
-$TTL 604800
-@       IN      SOA     ns1.jarkomK49.com. root.jarkomK49.com. (
-                        2025101303 ; Serial YYYYMMDDXX (Serial dinaikkan)
-                        604800     ; Refresh
-                        86400      ; Retry
-                        2419200    ; Expire
-                        604800 )   ; Negative Cache TTL
+ln -s /etc/nginx/sites-available/numenor-web /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+systemctl restart nginx
 
-@       IN      NS      ns1.jarkomK49.com.
-@       IN      NS      ns2.jarkomK49.com.
+# Elendil, Isildur, Anarion
+apt-get update
+apt-get install nginx php8.4-fpm php8.4-curl php8.4-mbstring php8.4-xml php8.4-mysql git -y
 
-2       IN      PTR     ns1.jarkomK49.com.
-3       IN      PTR     ns2.jarkomK49.com.
+cd /var/www/
+git clone https://github.com/elshiraphine/laravel-simple-rest-api laravel-web
+chown -R www-data:www-data /var/www/laravel-web/
+
+cat > /etc/nginx/sites-available/laravel-web <<EOF
+server {
+    listen 80 default_server;
+    root /var/www/laravel-web/public;
+    index index.php;
+    server_name _;
+
+    location / {
+        try_files \$uri \$uri/ /index.php?\$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock; 
+    }
+}
 EOF
 
-cat > /etc/bind/named.conf.options <<'EOF'
-options {
-    directory "/var/cache/bind";
-    allow-query { any; };
-    auth-nxdomain no;
-    listen-on-v6 { any; };
-};
+ln -s /etc/nginx/sites-available/laravel-web /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+
+systemctl restart php8.4-fpm
+systemctl restart nginx
+
+# Galadriel, Celeborn, Oropher
+apt-get update
+apt-get install nginx php8.4-fpm -y
+
+mkdir -p /var/www/numenor-web/
+echo "<?php echo 'Halo dari Worker: ' . gethostname() . ' (' . \$_SERVER['SERVER_ADDR'] . ')'; ?>" > /var/www/numenor-web/index.php
+chown -R www-data:www-data /var/www/numenor-web/
+
+cat > /etc/nginx/sites-available/numenor-web <<EOF
+server {
+    listen 80 default_server;
+    root /var/www/numenor-web/;
+    index index.php index.html;
+    server_name _;
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
+    }
+}
 EOF
 
-service bind9 restart
+ln -s /etc/nginx/sites-available/numenor-web /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+
+systemctl restart php8.4-fpm
+systemctl restart nginx
+
+# Gilgalad atai Amandil
+curl numenor-web.jarkomK49.com
+curl laravel-web.jarkomK49.com/api/item
