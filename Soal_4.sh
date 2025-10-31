@@ -177,7 +177,7 @@ apt-get update
 apt-get install nginx php8.4-fpm -y
 
 mkdir -p /var/www/numenor-web/
-echo "<?php echo 'Halo dari Worker: ' . gethostname() . ' (' . \$_SERVER['SERVER_ADDR'] . ')'; ?>" > /var/www/numenor-web/index.php
+echo "<?php echo 'Halo dari Worker: ' . gethostname() . ' (' . gethostbyname(gethostname()) . ')'; ?>" > /var/www/numenor-web/index.php
 chown -R www-data:www-data /var/www/numenor-web/
 
 cat > /etc/nginx/sites-available/numenor-web <<EOF
