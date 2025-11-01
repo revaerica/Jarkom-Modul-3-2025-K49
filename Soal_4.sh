@@ -195,15 +195,14 @@ service php8.4-fpm status
 service nginx status
 
 # Galadriel, Celeborn, Oropher
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
-apt-get update
-apt-get install nginx php8.4-fpm -y
+apt update
+apt install nginx php8.4-fpm -y
 
 mkdir -p /var/www/numenor-web/
 echo "<?php echo 'Halo dari Worker: ' . gethostname() . ' (' . gethostbyname(gethostname()) . ')'; ?>" > /var/www/numenor-web/index.php
 chown -R www-data:www-data /var/www/numenor-web/
 
-cat > /etc/nginx/sites-available/numenor-web <<EOF
+cat > /etc/nginx/sites-available/numenor-web <<'EOF'
 server {
     listen 80 default_server;
     root /var/www/numenor-web/;
@@ -211,7 +210,7 @@ server {
     server_name _;
 
     location / {
-        try_files \$uri \$uri/ =404;
+        try_files $uri $uri/ =404;
     }
 
     location ~ \.php$ {
@@ -226,9 +225,6 @@ rm -f /etc/nginx/sites-enabled/default
 
 service php8.4-fpm restart
 service nginx restart
-
-service php8.4-fpm status
-service nginx status
 
 # galadriel
 echo "10.88.2.2 Galadriel" >> /etc/hosts
