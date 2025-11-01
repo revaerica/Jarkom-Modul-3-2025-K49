@@ -205,6 +205,10 @@ service php8.4-fpm status
 service nginx status
 
 # Di Galadriel, Celeborn, dan Oropher
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+apt-get update
+apt-get install nginx php8.4-fpm php8.4-curl php8.4-mbstring php8.4-xml php8.4-mysql git -y
+
 cat > /etc/nginx/sites-available/numenor-web <<'EOF'
 server {
     listen 80 default_server;
