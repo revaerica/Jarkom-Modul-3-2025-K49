@@ -321,13 +321,12 @@ Aldarion
 
 ## Soal 10
 
+## Soal 11
 
-## Soal 6
+## Soal 12
 
-## Soal 7
+## Soal 13
 
-## Soal 8
+## Soal 14
 
-## Soal 9
-
-## Soal 10
+## Soal 15
