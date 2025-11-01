@@ -122,9 +122,10 @@ apt-get update && apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/numenor-web <<'EOF'
 upstream php_workers {
-    server 10.88.2.2 max_fails=3 fail_timeout=3s;
-    server 10.88.2.3 max_fails=3 fail_timeout=3s;
-    server 10.88.2.4 max_fails=3 fail_timeout=3s;
+    least_conn;
+    server 10.88.2.2;
+    server 10.88.2.3;
+    server 10.88.2.4;
 }
 
 server {
