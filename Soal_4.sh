@@ -122,10 +122,12 @@ apt-get update && apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/numenor-web <<'EOF'
 upstream php_workers {
-    least_conn;
+    # Round robin (default)
     server 10.88.2.2;
     server 10.88.2.3;
     server 10.88.2.4;
+
+    keepalive 32;
 }
 
 server {
@@ -135,7 +137,7 @@ server {
     location / {
         proxy_pass http://php_workers;
         proxy_http_version 1.1;
-        proxy_set_header Connection "close";  # tambahkan ini
+        proxy_set_header Connection "close";
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
