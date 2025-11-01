@@ -121,7 +121,7 @@ echo "nameserver 192.168.122.1" > /etc/resolv.conf
 apt-get update && apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/numenor-web <<'EOF'
-uupstream php_workers {
+upstream php_workers {
     least_conn;
     server 10.88.2.2;
     server 10.88.2.3;
