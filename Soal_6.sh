@@ -12,7 +12,7 @@ echo 'INTERFACESv4="eth0"' > /etc/default/isc-dhcp-server
 echo "[*] Creating DHCP configuration with lease time rules..."
 
 cat > /etc/dhcp/dhcpd.conf <<'EOF'
-default-lease-time 3600;-
+default-lease-time 3600;
 max-lease-time 3600;
 
 option domain-name "jarkomK49.com";
