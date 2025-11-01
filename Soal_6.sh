@@ -76,6 +76,7 @@ echo "  - Manusia: 10.88.1.5 - 10.88.1.34"
 echo "  - Peri: 10.88.2.7 - 10.88.2.255"
 echo ""
 
+# Gilgalad
 echo "=========================================="
 echo "   TESTING - CLIENT KELUARGA MANUSIA"
 echo "=========================================="
@@ -102,6 +103,7 @@ echo ""
 echo "Expected lease time: 30 minutes (1800 seconds)"
 echo ""
 
+# Amandil
 echo "=========================================="
 echo "   TESTING - CLIENT KELUARGA PERI"
 echo "=========================================="
