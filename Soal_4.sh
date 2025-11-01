@@ -1,17 +1,16 @@
 # Erendis
-sed -i '/www\s\+IN\s\+CNAME\s\+numenor-web/a\
-\
-Elros\tIN\tTXT\t"Cincin Sauron"\
-Pharazon\tIN\tTXT\t"Aliansi Terakhir"' /etc/bind/K49/jarkomK49.com
+sed -i 's/^numenor-web\tIN\tA\t10.88.2\.[0-9]\+/numenor-web\tIN\tA\t10.88.2.2/' /etc/bind/K49/jarkomK49.com
+sed -i '/IN\tPTR\tPharazon/d' /etc/bind/K49/2.88.10.in-addr.arpa
+sed -i '/IN\tPTR\tGaladriel/d' /etc/bind/K49/2.88.10.in-addr.arpa
 
-sed -i '/Elros\s\+IN\s\+A\s\+10.88.1.35/a\
-numenor-web\tIN\tA\t10.88.2.6\
-laravel-web\tIN\tA\t10.88.1.35' /etc/bind/K49/jarkomK49.com
+sed -i '/@\s\+IN\s\+NS\s\+ns2/a\2\t\tIN\tPTR\tPharazon.jarkomK49.com.' /etc/bind/K49/2.88.10.in-addr.arpa
+sed -i '/@\s\+IN\s\+NS\s\+ns2/a\6\t\tIN\tPTR\tGaladriel.jarkomK49.com.' /etc/bind/K49/2.88.10.in-addr.arpa
 
-zone "1.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/1.88.10.in-addr.arpa"; };
-zone "2.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/2.88.10.in-addr.arpa"; };
-zone "3.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/3.88.10.in-addr.arpa"; };
-zone "4.88.10.in-addr.arpa" { type master; notify yes; also-notify { 10.88.3.3; }; allow-transfer { 10.88.3.3; }; file "/etc/bind/K49/4.88.10.in-addr.arpa"; };
+named-checkzone jarkomK49.com /etc/bind/K49/jarkomK49.com 
+named-checkzone 2.88.10.in-addr.arpa /etc/bind/K49/2.88.10.in-addr.arpa 
+
+pkill named
+/usr/sbin/named
 
 cat > /etc/bind/K49/1.88.10.in-addr.arpa <<'EOF'
 $TTL 604800
@@ -30,16 +29,16 @@ EOF
 
 cat > /etc/bind/K49/2.88.10.in-addr.arpa <<'EOF'
 $TTL 604800
-@       IN SOA ns1.jarkomK49.com. root.jarkomK49.com. ( 2025110108 ; Serial
-                                  604800 ; Refresh
-                                  86400 ; Retry
-                                  2419200 ; Expire
-                                  604800 ) ; Negative Cache TTL
+@       IN SOA ns1.jarkomK49.com. root.jarkomK49.com. ( 2025110110 ; Serial (Tingkatkan Serial)
+                                     604800 ; Refresh
+                                     86400 ; Retry
+                                     2419200 ; Expire
+                                     604800 ) ; Negative Cache TTL
 @       IN NS ns1.jarkomK49.com.
 @       IN NS ns2.jarkomK49.com.
-6       IN PTR Pharazon.jarkomK49.com.
-2       IN PTR Galadriel.jarkomK49.com.
-3       IN PTR Celeborn.jarkomK49.com.
+2       IN PTR Pharazon.jarkomK49.com.    # PHARAZON BARU
+6       IN PTR Galadriel.jarkomK49.com.   # GALADRIEL BARU
+5       IN PTR Celeborn.jarkomK49.com.
 4       IN PTR Oropher.jarkomK49.com.
 EOF
 
