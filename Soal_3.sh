@@ -122,7 +122,7 @@ EOF
 pkill named
 /usr/sbin/named
 
-# Di Gilgalad atau Amandil
+# Di Amandil-Gilgalad
 cat > /etc/resolv.conf <<EOF
 nameserver 10.88.3.2
 nameserver 10.88.3.3
