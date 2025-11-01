@@ -264,18 +264,26 @@ Gilgalad
 
 ## Soal 3
 Minastri
-<img width="1069" height="403" alt="image" src="https://github.com/user-attachments/assets/22d0f539-da4f-4e1a-8e56-80f98a2f552d" />
+<img width="1129" height="1224" alt="image" src="https://github.com/user-attachments/assets/1f507859-c8e3-4737-ac04-f7d56db58d68" />
 
 Erendis
-<img width="1152" height="702" alt="image" src="https://github.com/user-attachments/assets/48029902-9fd7-4cbd-8b8e-91c6c3a110bd" />
+<img width="1211" height="974" alt="image" src="https://github.com/user-attachments/assets/9042abf8-ef00-464f-91b5-f0263f26fb54" />
 
 Amdir
-<img width="1095" height="680" alt="image" src="https://github.com/user-attachments/assets/76ec6d2f-989e-4d3f-aea0-bc63b976ffd6" />
+<img width="1213" height="794" alt="image" src="https://github.com/user-attachments/assets/ca2b64a3-6561-457b-9203-bdea180f7b05" />
 
 Gilgalad/Amandil
-<img width="917" height="1002" alt="image" src="https://github.com/user-attachments/assets/f66abd31-dc2a-428c-a56c-a12649abc835" />
+<img width="995" height="1257" alt="image" src="https://github.com/user-attachments/assets/3252ec32-e482-4be9-8818-fc278e8bf042" />
 
 ## Soal 4
+Erendis
+<img width="1185" height="1224" alt="Screenshot 2025-11-01 115528" src="https://github.com/user-attachments/assets/dc5d0bdc-8969-4a7c-a524-7993a6ba02fa" />
+
+Amdir
+<img width="1201" height="1222" alt="Screenshot 2025-11-01 115432" src="https://github.com/user-attachments/assets/da6007a0-a622-4871-9c58-f5411d268d50" />
+
+Gilgalad/Amandiil
+<img width="1276" height="1226" alt="image" src="https://github.com/user-attachments/assets/477bb27b-5bb6-45e1-b117-afa6a334f6db" />
 
 ## Soal 5
 
