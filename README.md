@@ -300,6 +300,18 @@ Gilgalad atau Amandil
 <img width="881" height="966" alt="image" src="https://github.com/user-attachments/assets/d4d80deb-3ab7-4121-9699-94b314e88709" />
 
 ## Soal 6
+Aldarion
+<img width="859" height="600" alt="image" src="https://github.com/user-attachments/assets/e49f41ef-c66c-4eef-8094-9c765db3e34b" />
+
+Gilgalad
+<img width="803" height="711" alt="image" src="https://github.com/user-attachments/assets/7788a427-f19a-408c-a7c1-f853fa85bb04" />
+
+Amandil
+<img width="806" height="400" alt="image" src="https://github.com/user-attachments/assets/12c4fce4-b382-4228-afe5-e9e371edd5a2" />
+
+Aldarion
+<img width="917" height="974" alt="image" src="https://github.com/user-attachments/assets/e9850b56-21d8-4cf4-be5b-e1dff2d69de0" />
+
 
 ## Soal 7
 
