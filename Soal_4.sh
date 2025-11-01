@@ -122,8 +122,8 @@ apt-get update && apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/numenor-web <<'EOF'
 upstream php_workers {
-    server 10.88.2.2 max_fails=3 fail_timeout=3s;
-    server 10.88.2.3 max_fails=3 fail_timeout=3s;
+    server 10.88.2.6 max_fails=3 fail_timeout=3s;
+    server 10.88.2.5 max_fails=3 fail_timeout=3s;
     server 10.88.2.4 max_fails=3 fail_timeout=3s;
 }
 
@@ -137,7 +137,6 @@ server {
     location / {
         proxy_pass http://php_workers;
         
-        # Protokol HTTP/1.1 dan header "close" memastikan koneksi ditutup total
         proxy_http_version 1.1;
         proxy_set_header Connection "close"; 
 
@@ -235,11 +234,11 @@ service php8.4-fpm restart
 service nginx restart
 
 # galadriel
-echo "10.88.2.2 Galadriel" >> /etc/hosts
+echo "10.88.2.6 Galadriel" >> /etc/hosts
 service php8.4-fpm restart
 
 # celeborn
-echo "10.88.2.3 Celeborn" >> /etc/hosts
+echo "10.88.2.5 Celeborn" >> /etc/hosts
 service php8.4-fpm restart
 
 # Oropher
