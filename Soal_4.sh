@@ -36,8 +36,8 @@ $TTL 604800
                                      604800 ) ; Negative Cache TTL
 @       IN NS ns1.jarkomK49.com.
 @       IN NS ns2.jarkomK49.com.
-2       IN PTR Pharazon.jarkomK49.com.    # PHARAZON BARU
-6       IN PTR Galadriel.jarkomK49.com.   # GALADRIEL BARU
+2       IN PTR Pharazon.jarkomK49.com.
+6       IN PTR Galadriel.jarkomK49.com.
 5       IN PTR Celeborn.jarkomK49.com.
 4       IN PTR Oropher.jarkomK49.com.
 EOF
