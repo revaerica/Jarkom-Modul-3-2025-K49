@@ -87,7 +87,11 @@ pkill named
 /usr/sbin/named
 
 # Elros
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
+cat > /etc/resolv.conf <<EOF
+nameserver 10.88.3.2  # Erendis
+nameserver 10.88.3.3  # Amdir
+nameserver 192.168.122.1
+EOF
 apt-get update
 apt-get install -y systemd
 apt-get install nginx -y
@@ -120,7 +124,11 @@ service nginx restart
 service nginx status
 
 # Pharazon
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
+cat > /etc/resolv.conf <<EOF
+nameserver 10.88.3.2  # Erendis
+nameserver 10.88.3.3  # Amdir
+nameserver 192.168.122.1
+EOF
 apt-get update && apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/numenor-web <<'EOF'
@@ -167,12 +175,20 @@ cd /var/www/
 git clone https://github.com/elshiraphine/laravel-simple-rest-api laravel-web
 chown -R www-data:www-data /var/www/laravel-web/
 
-cd laravel-web/
+cd /var/www/laravel-web/
+chown -R www-data:www-data .
 rm composer.lock
-composer update --no-dev
+
+composer install --no-dev
 cp .env.example .env
 php artisan key:generate
-chown -R www-data:www-data /var/www/laravel-web/
+
+php artisan migrate --force
+php artisan cache:clear
+php artisan config:clear
+
+chown -R www-data:www-data /var/www/laravel-web/storage
+chown -R www-data:www-data /var/www/laravel-web/bootstrap/cache
 
 cat > /etc/nginx/sites-available/laravel-web <<EOF
 server {
@@ -196,7 +212,7 @@ ln -s /etc/nginx/sites-available/laravel-web /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
 chown -R www-data:www-data /var/www/laravel-web/storage
-chown -R www-data:www-data /var/www/laravel-web/bootstrap/cach
+chown -R www-data:www-data /var/www/laravel-web/bootstrap/cache
 
 service php8.4-fpm restart
 service nginx restart
@@ -211,46 +227,41 @@ apt-get install nginx php8.4-fpm php8.4-curl php8.4-mbstring php8.4-xml php8.4-m
 
 cat > /etc/nginx/sites-available/numenor-web <<'EOF'
 server {
-    listen 80 default_server;
-    root /var/www/numenor-web/;
-    index index.php index.html;
-    server_name _;
+    listen 80 default_server;
+    root /var/www/numenor-web/;
+    index index.php index.html;
+    server_name _;
 
-    # START: Penambahan untuk mengatasi 400 Bad Request
     client_header_buffer_size 128k;
     large_client_header_buffers 4 128k;
-    # END: Penambahan untuk mengatasi 400 Bad Request
 
-    location / {
-        try_files $uri $uri/ =404;
-    }
+    location / {
+        try_files $uri $uri/ =404;
+    }
 
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
-    }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
+    }
 }
 EOF
 
 ln -s /etc/nginx/sites-available/numenor-web /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
+rm -f /etc/nginx/sites-enabled/default # Hapus default
+
+HOST_IP=$(hostname -I | awk '{print $1}')
+HOST_NAME=$(hostname)
+mkdir -p /var/www/numenor-web/
+echo '<?php echo "Halo dari Worker: " . gethostname() . " (" . gethostbyname(gethostname()) . ")"; ?>' > /var/www/numenor-web/index.php
+
+chown -R www-data:www-data /var/www/numenor-web/
+chown -R www-data:www-data /var/www/html/
 
 service php8.4-fpm restart
+nginx -t
 service nginx restart
 
-# galadriel
-echo "10.88.2.6 Galadriel" >> /etc/hosts
-service php8.4-fpm restart
-
-# celeborn
-echo "10.88.2.5 Celeborn" >> /etc/hosts
-service php8.4-fpm restart
-
-# Oropher
-echo "10.88.2.4 Oropher" >> /etc/hosts
-service php8.4-fpm restart
-
-# Gilgalad atai Amandil
+# Gilgalad atau Amandil
 cat > /etc/resolv.conf <<EOF
 nameserver 10.88.3.2
 nameserver 10.88.3.3 
