@@ -204,29 +204,27 @@ service nginx restart
 service php8.4-fpm status
 service nginx status
 
-# Galadriel, Celeborn, Oropher
-apt update
-apt install nginx php8.4-fpm -y
-
-mkdir -p /var/www/numenor-web/
-echo "<?php echo 'Halo dari Worker: ' . gethostname() . ' (' . gethostbyname(gethostname()) . ')'; ?>" > /var/www/numenor-web/index.php
-chown -R www-data:www-data /var/www/numenor-web/
-
+# Di Galadriel, Celeborn, dan Oropher
 cat > /etc/nginx/sites-available/numenor-web <<'EOF'
 server {
-    listen 80 default_server;
-    root /var/www/numenor-web/;
-    index index.php index.html;
-    server_name _;
+    listen 80 default_server;
+    root /var/www/numenor-web/;
+    index index.php index.html;
+    server_name _;
 
-    location / {
-        try_files $uri $uri/ =404;
-    }
+    # START: Penambahan untuk mengatasi 400 Bad Request
+    client_header_buffer_size 128k;
+    large_client_header_buffers 4 128k;
+    # END: Penambahan untuk mengatasi 400 Bad Request
 
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
-    }
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
+    }
 }
 EOF
 
