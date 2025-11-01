@@ -286,6 +286,29 @@ Gilgalad/Amandiil
 <img width="1276" height="1226" alt="image" src="https://github.com/user-attachments/assets/477bb27b-5bb6-45e1-b117-afa6a334f6db" />
 
 ## Soal 5
+Erendis
+<img width="917" height="1208" alt="image" src="https://github.com/user-attachments/assets/297f990a-ea3c-4254-b279-8c2a5b8c818d" />
+
+Amdir
+<img width="893" height="677" alt="image" src="https://github.com/user-attachments/assets/8439b754-4ad9-428e-840b-b7e048360656" />
+
+Gilgalad atau Amandil
+<img width="983" height="1149" alt="image" src="https://github.com/user-attachments/assets/b78f633e-dc46-4f42-9fab-9d8726327d8d" />
+
+<img width="883" height="953" alt="image" src="https://github.com/user-attachments/assets/d3f9a03c-327a-47fa-b04a-e683b7d1da4b" />
+
+<img width="881" height="966" alt="image" src="https://github.com/user-attachments/assets/d4d80deb-3ab7-4121-9699-94b314e88709" />
+
+## Soal 6
+
+## Soal 7
+
+## Soal 8
+
+## Soal 9
+
+## Soal 10
+
 
 ## Soal 6
 
