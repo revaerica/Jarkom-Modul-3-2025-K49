@@ -121,11 +121,12 @@ echo "nameserver 192.168.122.1" > /etc/resolv.conf
 apt-get update && apt-get install nginx -y
 
 cat > /etc/nginx/sites-available/numenor-web <<'EOF'
-upstream php_workers {
+uupstream php_workers {
     least_conn;
     server 10.88.2.2;
     server 10.88.2.3;
     server 10.88.2.4;
+    keepalive 0;
 }
 
 server {
@@ -134,6 +135,8 @@ server {
 
     location / {
         proxy_pass http://php_workers;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
