@@ -3,216 +3,131 @@ echo "=========================================="
 echo "   ALDARION DHCP SERVER CONFIGURATION"
 echo "=========================================="
 
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
-apt-get update
-apt-get install isc-dhcp-server -y
+ip addr add 10.88.5.2/24 dev eth0
+ip addr add 10.88.1.1/24 dev eth1
+ip addr add 10.88.2.1/24 dev eth2
+ip link set eth0 up
+ip link set eth1 up
+ip link set eth2 up
 
-echo "[*] Configuring DHCP interface..."
-echo 'INTERFACESv4="eth0"' > /etc/default/isc-dhcp-server
-
-echo "[*] Creating DHCP configuration with lease time rules..."
+echo "=== IP Addresses ==="
+ip addr show | grep "inet 10.88"
 
 cat > /etc/dhcp/dhcpd.conf <<'EOF'
+authoritative;
+
 option domain-name "jarkomK49.com";
 option domain-name-servers 10.88.3.2, 10.88.3.3;
 
-# SUBNET 10.88.1.0/24 (Manusia)
 subnet 10.88.1.0 netmask 255.255.255.0 {
     range 10.88.1.5 10.88.1.34;
     option routers 10.88.1.1;
     option broadcast-address 10.88.1.255;
-    
     default-lease-time 1800;
     max-lease-time 3600;
 }
 
-# SUBNET 10.88.2.0/24 (Peri)
 subnet 10.88.2.0 netmask 255.255.255.0 {
     range 10.88.2.7 10.88.2.255;
     option routers 10.88.2.1;
     option broadcast-address 10.88.2.255;
-    
     default-lease-time 600;
     max-lease-time 3600;
 }
 
-# SUBNET LAINNYA (Tidak ada DHCP)
-# Subnet 10.88.3.0/24 - DNS Servers (Static IP)
-subnet 10.88.3.0 netmask 255.255.255.0 {
-}
-
-# Subnet 10.88.4.0/24 - Database Server (Static IP)
-subnet 10.88.4.0 netmask 255.255.255.0 {
-}
-
-# Subnet 10.88.5.0/24 - DHCP & Router (Static IP)
-subnet 10.88.5.0 netmask 255.255.255.0 {
-}
+subnet 10.88.3.0 netmask 255.255.255.0 {}
+subnet 10.88.4.0 netmask 255.255.255.0 {}
+subnet 10.88.5.0 netmask 255.255.255.0 {}
 EOF
 
-echo "[*] Checking DHCP configuration..."
+cat > /etc/default/isc-dhcp-server <<'EOF'
+INTERFACESv4="eth1 eth2"
+INTERFACESv6=""
+EOF
+
 dhcpd -t -cf /etc/dhcp/dhcpd.conf
-
-echo "[*] Starting DHCP Server..."
 service isc-dhcp-server restart
-
-echo "[*] Checking DHCP Server status..."
 service isc-dhcp-server status
 
 echo ""
 echo "=========================================="
-echo "     ALDARION CONFIGURATION COMPLETE!"
+echo "  ALDARION READY!"
 echo "=========================================="
-echo ""
-echo "Aturan Waktu Peminjaman Tanah:"
-echo "  👨 Keluarga Manusia (10.88.1.x): 30 menit (1800s)"
-echo "  🧝 Keluarga Peri (10.88.2.x): 10 menit (600s)"
-echo "  ⏰ Batas Maksimal (semua): 1 jam (3600s)"
-echo ""
-echo "Range IP:"
-echo "  - Manusia: 10.88.1.5 - 10.88.1.34"
-echo "  - Peri: 10.88.2.7 - 10.88.2.255"
-echo ""
+echo "✅ Manusia (10.88.1.x): 30 menit"
+echo "✅ Peri (10.88.2.x): 10 menit"
 
 # Gilgalad
 echo "=========================================="
-echo "   TESTING - GILGALAD (KELUARGA MANUSIA)"
+echo "   GILGALAD - CLIENT KELUARGA MANUSIA"
 echo "=========================================="
-
-cp /etc/network/interfaces /etc/network/interfaces.backup
 
 cat > /etc/network/interfaces <<'EOF'
 auto eth0
 iface eth0 inet dhcp
 EOF
 
-echo "[*] Flushing existing IP..."
 ip addr flush dev eth0
-
-echo "[*] Requesting IP from DHCP (Keluarga Manusia)..."
 dhclient -r eth0 2>/dev/null
 dhclient -v eth0
 
 echo ""
-echo "[*] IP Configuration received:"
+echo "=== IP yang didapat ==="
 ip addr show eth0 | grep "inet "
 
 echo ""
-echo "[*] Routing table:"
-ip route
-
-echo ""
-echo "[*] DNS Configuration:"
+echo "=== DNS Config ==="
 cat /etc/resolv.conf
 
 echo ""
-echo "[*] Checking lease information..."
-if [ -f /var/lib/dhcp/dhclient.leases ]; then
-    echo "=== Lease Details ==="
-    cat /var/lib/dhcp/dhclient.leases | tail -20
-    echo ""
-    echo "=== Lease Time Summary ==="
-    grep "lease-time" /var/lib/dhcp/dhclient.leases | tail -1
-fi
+echo "=== Lease Information ==="
+cat /var/lib/dhcp/dhclient.leases | tail -15
 
 echo ""
-echo "Expected: Lease time 1800 seconds (30 minutes)"
-echo ""
+echo "Expected: 1800 seconds (30 minutes)"
 
-echo "[*] Testing DNS resolution..."
-nslookup jarkomK49.com
-
-echo ""
+# AMANDIL (Client Peri)
 echo "=========================================="
-echo "   GILGALAD TESTING COMPLETE!"
+echo "   AMANDIL - CLIENT KELUARGA PERI"
 echo "=========================================="
-
-# Amandil
-echo "=========================================="
-echo "   TESTING - AMANDIL (KELUARGA PERI)"
-echo "=========================================="
-
-cp /etc/network/interfaces /etc/network/interfaces.backup
 
 cat > /etc/network/interfaces <<'EOF'
 auto eth0
 iface eth0 inet dhcp
 EOF
 
-echo "[*] Flushing existing IP..."
 ip addr flush dev eth0
-
-echo "[*] Requesting IP from DHCP (Keluarga Peri)..."
 dhclient -r eth0 2>/dev/null
 dhclient -v eth0
 
 echo ""
-echo "[*] IP Configuration received:"
+echo "=== IP yang didapat ==="
 ip addr show eth0 | grep "inet "
 
 echo ""
-echo "[*] Routing table:"
-ip route
-
-echo ""
-echo "[*] DNS Configuration:"
+echo "=== DNS Config ==="
 cat /etc/resolv.conf
 
 echo ""
-echo "[*] Checking lease information..."
-if [ -f /var/lib/dhcp/dhclient.leases ]; then
-    echo "=== Lease Details ==="
-    cat /var/lib/dhcp/dhclient.leases | tail -20
-    echo ""
-    echo "=== Lease Time Summary ==="
-    grep "lease-time" /var/lib/dhcp/dhclient.leases | tail -1
-fi
+echo "=== Lease Information ==="
+cat /var/lib/dhcp/dhclient.leases | tail -15
 
 echo ""
-echo "Expected: Lease time 600 seconds (10 minutes)"
-echo ""
+echo "Expected: 600 seconds (10 minutes)"
 
-echo "[*] Testing DNS resolution..."
-nslookup jarkomK49.com
-
-echo ""
+# Aldarion
 echo "=========================================="
-echo "   AMANDIL TESTING COMPLETE!"
-echo "=========================================="
-
-# Ke Aldarion lagi
-echo ""
-echo "=========================================="
-echo "   MONITORING DHCP LEASES (di Aldarion)"
+echo "   MONITORING DHCP LEASES"
 echo "=========================================="
 
 echo ""
-echo "[*] Active DHCP Leases:"
-echo "==========================================="
+echo "=== Active Leases ==="
 cat /var/lib/dhcp/dhcpd.leases
 
 echo ""
-echo "[*] DHCP Server Statistics:"
-echo "==========================================="
-echo "Leases by subnet:"
+echo "=== Statistics ==="
 grep "^lease" /var/lib/dhcp/dhcpd.leases | awk '{print $2}' | sort | uniq -c
 
 echo ""
-echo "[*] Recent DHCP Server Log:"
-echo "==========================================="
-tail -n 30 /var/log/syslog | grep dhcpd
-
-echo ""
 echo "=========================================="
-echo "         ALL TESTING COMPLETE!"
+echo "         TESTING COMPLETE!"
 echo "=========================================="
-echo ""
-echo "✅ Aldarion: DHCP Server configured"
-echo "✅ Gilgalad: Received IP with 30 min lease (Manusia)"
-echo "✅ Amandil: Received IP with 10 min lease (Peri)"
-echo "✅ Max lease time: 1 hour for all"
-echo ""
-echo "Verification Summary:"
-echo "  - Manusia (10.88.1.5-34): default 1800s, max 3600s"
-echo "  - Peri (10.88.2.7-255): default 600s, max 3600s"
-echo ""
