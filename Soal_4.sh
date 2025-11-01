@@ -126,7 +126,6 @@ upstream php_workers {
     server 10.88.2.2;
     server 10.88.2.3;
     server 10.88.2.4;
-    keepalive 0;
 }
 
 server {
