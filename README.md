@@ -56,6 +56,7 @@ iface eth5 inet static
 	address 10.88.5.1
 	netmask 255.255.255.0
 
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 up apt-get update -y
 up apt-get install iptables isc-dhcp-relay -y
 up iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.88.0.0/16
