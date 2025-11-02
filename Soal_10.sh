@@ -14,9 +14,9 @@ echo "[Elros] Configuring Nginx Load Balancer..."
 cat > /etc/nginx/sites-available/load-balancer <<'EOF'
 
 upstream kesatria_numenor {
-    server 10.88.1.2:8001;   # Elendil
-    server 10.88.1.3:8002;   # Isildur
-    server 10.88.1.4:8003;   # Anarion
+    server 10.88.1.2:8001;  
+    server 10.88.1.3:8002;  
+    server 10.88.1.4:8003; 
 }
 
 server {
