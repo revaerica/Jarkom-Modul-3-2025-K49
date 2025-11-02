@@ -21,11 +21,6 @@
 13. [Soal 13](#Soal-13)
 14. [Soal 14](#Soal-14)
 15. [Soal 15](#Soal-15)
-16. [Soal 16](#Soal-16)
-17. [Soal 17](#Soal-17)
-18. [Soal 18](#Soal-18)
-19. [Soal 19](#Soal-19)
-20. [Soal 20](#Soal-20)
 
 ## Soal 1
 
@@ -78,6 +73,8 @@ iface eth0 inet static
 	address 10.88.1.2
 	netmask 255.255.255.0
 	gateway 10.88.1.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Isildur**
@@ -87,6 +84,8 @@ iface eth0 inet static
 	address 10.88.1.3
 	netmask 255.255.255.0
 	gateway 10.88.1.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Anarion**
@@ -96,6 +95,8 @@ iface eth0 inet static
 	address 10.88.1.4
 	netmask 255.255.255.0
 	gateway 10.88.1.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Miriel**
@@ -105,6 +106,8 @@ iface eth0 inet static
 	address 10.88.1.5
 	netmask 255.255.255.0
 	gateway 10.88.1.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Celebrimbor**
@@ -114,6 +117,8 @@ iface eth0 inet static
 	address 10.88.2.3
 	netmask 255.255.255.0
 	gateway 10.88.2.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Elros**
@@ -123,6 +128,8 @@ iface eth0 inet static
     address 10.88.1.10 
     netmask 255.255.255.0
     gateway 10.88.1.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Pharazon**
@@ -132,6 +139,8 @@ iface eth0 inet static
 	address 10.88.2.2
 	netmask 255.255.255.0
 	gateway 10.88.2.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Galadriel**
@@ -141,6 +150,8 @@ iface eth0 inet static
 	address 10.88.2.6
 	netmask 255.255.255.0
 	gateway 10.88.2.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Celeborn**
@@ -150,6 +161,8 @@ iface eth0 inet static
 	address 10.88.2.5
 	netmask 255.255.255.0
 	gateway 10.88.2.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Oropher**
@@ -159,6 +172,8 @@ iface eth0 inet static
 	address 10.88.2.4
 	netmask 255.255.255.0
 	gateway 10.88.2.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Erendis**
@@ -168,6 +183,8 @@ iface eth0 inet static
 	address 10.88.3.2
 	netmask 255.255.255.0
 	gateway 10.88.3.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Amdir**
@@ -177,6 +194,8 @@ iface eth0 inet static
 	address 10.88.3.3
 	netmask 255.255.255.0
 	gateway 10.88.3.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Aldarion**
@@ -186,6 +205,8 @@ iface eth0 inet static
     address 10.88.4.2
     netmask 255.255.255.0
     gateway 10.88.4.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Palantir**
@@ -195,6 +216,8 @@ iface eth0 inet static
 	address 10.88.4.3
 	netmask 255.255.255.0
 	gateway 10.88.4.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Narvi**
@@ -204,6 +227,8 @@ iface eth0 inet static
 	address 10.88.4.4
 	netmask 255.255.255.0
 	gateway 10.88.4.1
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Minastir**
@@ -223,12 +248,16 @@ up apt-get install bind9 nginx -y
 ```
 auto eth0
 iface eth0 inet dhcp
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Amandil**
 ```
 auto eth0
 iface eth0 inet dhcp
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 **Khamul**
@@ -240,6 +269,8 @@ auto eth0
 iface eth0 inet dhcp
 
 hwaddress ether 02:42:92:bc:4c:00
+
+up echo nameserver 10.88.5.2 > /etc/resolv.conf
 ```
 
 Amandil
