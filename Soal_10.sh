@@ -1,3 +1,7 @@
+echo "10.88.1.2 elendil.laravel.com" >> /etc/hosts
+echo "10.88.1.3 isildur.laravel.com" >> /etc/hosts
+echo "10.88.1.4 anarion.laravel.com" >> /etc/hosts
+
 # Elros
 echo "=========================================="
 echo "   ELROS - Load Balancer Setup"
