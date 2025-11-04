@@ -2,8 +2,8 @@
 #!/bin/bash
 
 setup_laravel_worker() {
-    local HOSTNAME=$1
-    local IP=$2
+    HOSTNAME=$(hostname | tr '[:lower:]' '[:upper:]')
+    IP=$(hostname -I | awk '{print $1}')
 
     echo "=========================================="
     echo "        $HOSTNAME - Laravel Worker"
@@ -73,9 +73,7 @@ EOF
     echo
 }
 
-setup_laravel_worker "ELENDIL" "10.88.1.2"
-setup_laravel_worker "ISILDUR" "10.88.1.3"
-setup_laravel_worker "ANARION" "10.88.1.4"
+setup_laravel_worker "$HOSTNAME" "$IP"
 
 # Amandil atau Gilgalad
 echo "=========================================="
