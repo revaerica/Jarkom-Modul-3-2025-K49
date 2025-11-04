@@ -59,7 +59,7 @@ apt install -y php8.4 php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl php8.4-mbst
 service php8.4-fpm start
 
 cd /var/www
-git clone https://github.com/do-zoo/Resource-laravel.git laravel
+git clone https://github.com/elshiraphine/laravel-simple-rest-api.git laravel
 cd laravel
 composer install --no-interaction --prefer-dist --optimize-autoloader
 cp .env.example .env
@@ -108,7 +108,7 @@ apt install -y php8.4 php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl php8.4-mbst
 service php8.4-fpm start
 
 cd /var/www
-git clone https://github.com/do-zoo/Resource-laravel.git laravel
+git clone https://github.com/elshiraphine/laravel-simple-rest-api.git laravel
 cd laravel
 composer install --no-interaction --prefer-dist --optimize-autoloader
 cp .env.example .env
