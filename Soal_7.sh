@@ -1,31 +1,54 @@
-# Ewlendil
-echo "=========================================="
-echo "        ELENDIL - Laravel Worker 1"
-echo "=========================================="
+# Elendil, Isildur, Anarion
+#!/bin/bash
 
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
-apt update -y
-apt install -y php8.4 php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl php8.4-mbstring php8.4-zip php8.4-gd composer nginx git unzip curl
+setup_laravel_worker() {
+    local HOSTNAME=$1
+    local IP=$2
 
-service php8.4-fpm start
+    echo "=========================================="
+    echo "        $HOSTNAME - Laravel Worker"
+    echo "=========================================="
 
-cd /var/www
-git clone https://github.com/elshiraphine/laravel-simple-rest-api.git laravel
-cd laravel
-composer install --no-interaction --prefer-dist --optimize-autoloader
-cp .env.example .env
-php artisan key:generate
+    echo "nameserver 192.168.122.1" > /etc/resolv.conf
 
-chown -R www-data:www-data /var/www/laravel
-chmod -R 755 /var/www/laravel/storage
+    apt update -y
+    apt install -y lsb-release ca-certificates apt-transport-https curl gnupg
 
-cat > /etc/nginx/sites-available/laravel <<'EOF'
+    curl -fsSL https://packages.sury.org/php/apt.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/php.gpg
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
+
+    apt update -y
+    apt install -y php8.4 php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl \
+                   php8.4-mbstring php8.4-zip php8.4-gd php8.4-cli composer nginx git unzip
+
+    service php8.4-fpm restart
+
+    rm -rf /var/www/laravel
+
+    cd /var/www
+    git clone https://github.com/elshiraphine/laravel-simple-rest-api.git laravel
+    cd laravel
+
+    git config --global --add safe.directory /var/www/laravel
+
+    composer update --no-interaction --prefer-dist --optimize-autoloader || composer install --no-interaction
+
+    cp .env.example .env
+    php artisan key:generate || echo "⚠️ Laravel key belum digenerate, cek vendor autoload"
+
+    chown -R www-data:www-data /var/www/laravel
+    chmod -R 755 /var/www/laravel/storage
+
+    cat > /etc/nginx/sites-available/laravel <<'EOF'
 server {
     listen 80;
     server_name _;
-    root /var/www/laravel/public;
 
+    root /var/www/laravel/public;
     index index.php index.html;
+
+    access_log /var/log/nginx/access.log;
+    error_log  /var/log/nginx/error.log;
 
     location / {
         try_files $uri $uri/ /index.php?$query_string;
@@ -40,130 +63,32 @@ server {
 }
 EOF
 
-ln -sf /etc/nginx/sites-available/laravel /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
-service nginx restart
+    ln -sf /etc/nginx/sites-available/laravel /etc/nginx/sites-enabled/laravel
+    rm -f /etc/nginx/sites-enabled/default
 
-echo "✅ Elendil siap diakses di http://10.88.1.2"
-echo
+    service php8.4-fpm restart
+    service nginx restart
 
-# Isildur
-echo "=========================================="
-echo "        ISILDUR - Laravel Worker 2"
-echo "=========================================="
-
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
-apt update -y
-apt install -y php8.4 php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl php8.4-mbstring php8.4-zip php8.4-gd composer nginx git unzip curl
-
-service php8.4-fpm start
-
-cd /var/www
-git clone https://github.com/elshiraphine/laravel-simple-rest-api.git laravel
-cd laravel
-composer install --no-interaction --prefer-dist --optimize-autoloader
-cp .env.example .env
-php artisan key:generate
-
-chown -R www-data:www-data /var/www/laravel
-chmod -R 755 /var/www/laravel/storage
-
-cat > /etc/nginx/sites-available/laravel <<'EOF'
-server {
-    listen 80;
-    server_name _;
-    root /var/www/laravel/public;
-
-    index index.php index.html;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
+    echo "✅ $HOSTNAME siap diakses di http://$IP"
+    echo
 }
-EOF
 
-ln -sf /etc/nginx/sites-available/laravel /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
-service nginx restart
+setup_laravel_worker "ELENDIL" "10.88.1.2"
+setup_laravel_worker "ISILDUR" "10.88.1.3"
+setup_laravel_worker "ANARION" "10.88.1.4"
 
-echo "✅ Isildur siap diakses di http://10.88.1.3"
-echo
-
-# Anarion
-echo "=========================================="
-echo "        ANARION - Laravel Worker 3"
-echo "=========================================="
-
-echo "nameserver 192.168.122.1" > /etc/resolv.conf
-apt update -y
-apt install -y php8.4 php8.4-fpm php8.4-mysql php8.4-xml php8.4-curl php8.4-mbstring php8.4-zip php8.4-gd composer nginx git unzip curl
-
-service php8.4-fpm start
-
-cd /var/www
-git clone https://github.com/elshiraphine/laravel-simple-rest-api.git laravel
-cd laravel
-composer install --no-interaction --prefer-dist --optimize-autoloader
-cp .env.example .env
-php artisan key:generate
-
-chown -R www-data:www-data /var/www/laravel
-chmod -R 755 /var/www/laravel/storage
-
-cat > /etc/nginx/sites-available/laravel <<'EOF'
-server {
-    listen 80;
-    server_name _;
-    root /var/www/laravel/public;
-
-    index index.php index.html;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include fastcgi_params;
-    }
-}
-EOF
-
-ln -sf /etc/nginx/sites-available/laravel /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
-service nginx restart
-
-echo "✅ Anarion siap diakses di http://10.88.1.4"
-echo
-
-# Client Test bisa Amandil atau Gilgalad dll
+# Amandil atau Gilgalad
 echo "=========================================="
 echo "         TESTING DARI CLIENT"
 echo "=========================================="
 
-apt update -y
-apt install -y lynx
+apt install -y lynx -y
 
-echo
-echo "=== Uji koneksi Laravel Worker 1 (Elendil) ==="
-lynx -dump http://10.88.1.2 | head -n 10
-
-echo
-echo "=== Uji koneksi Laravel Worker 2 (Isildur) ==="
-lynx -dump http://10.88.1.3 | head -n 10
-
-echo
-echo "=== Uji koneksi Laravel Worker 3 (Anarion) ==="
-lynx -dump http://10.88.1.4 | head -n 10
+for IP in 10.88.1.2 10.88.1.3 10.88.1.4; do
+    echo
+    echo "=== Uji koneksi Laravel Worker ($IP) ==="
+    lynx -dump http://$IP | head -n 10 || echo "Gagal mengakses $IP"
+done
 
 echo
 echo "=========================================="
