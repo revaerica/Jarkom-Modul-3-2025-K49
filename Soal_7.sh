@@ -1,4 +1,4 @@
-# Elendil, Isildur, Anarion
+# Elendil/Isildur/Anarion
 #!/bin/bash
 
 setup_laravel_worker() {
