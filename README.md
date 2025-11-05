@@ -275,6 +275,96 @@ Amandil
 Gilgalad
 <img width="1375" height="1225" alt="image" src="https://github.com/user-attachments/assets/1ed86e50-357f-4483-baee-6d1169559bf8" />
 
+### 1. NAT dan Forwarding
+```
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.88.0.0/16
+iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
+iptables -A FORWARD -i eth2 -o eth0 -j ACCEPT
+iptables -A FORWARD -i eth3 -o eth0 -j ACCEPT
+iptables -A FORWARD -i eth4 -o eth0 -j ACCEPT
+iptables -A FORWARD -i eth5 -o eth0 -j ACCEPT
+
+iptables -A FORWARD -i eth0 -o eth1 -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth2 -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth3 -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth4 -j ACCEPT
+iptables -A FORWARD -i eth0 -o eth5 -j ACCEPT
+```
+**Penjelasan**
+- `MASQUERADE`: mengaktifkan NAT (Network Address Translation) agar seluruh jaringan lokal 10.88.0.0/16 dapat mengakses internet melalui interface eth0.
+- Baris `FORWARD`: mengizinkan lalu lintas dua arah antara interface internal (eth1–eth5) dan interface eksternal (eth0).
+
+### 2. Mengizinkan ICMP (Ping)
+```
+iptables -A INPUT -i eth1 -p icmp -j ACCEPT 
+iptables -A INPUT -i eth2 -p icmp -j ACCEPT 
+iptables -A INPUT -i eth3 -p icmp -j ACCEPT 
+iptables -A INPUT -i eth4 -p icmp -j ACCEPT 
+iptables -A INPUT -i eth5 -p icmp -j ACCEPT
+```
+**Penjelasan**
+- Baris ini memperbolehkan masing-masing subnet internal melakukan komunikasi ICMP (ping) ke router Durin.
+- Hal ini mempermudah pengujian koneksi antar perangkat di jaringan lokal.
+  
+### 3. Konfigurasi DHCP Relay
+```
+cat > /etc/default/isc-dhcp-relay << EOF
+SERVERS="10.88.4.2"
+INTERFACES="eth1 eth2 eth3 eth4 eth5"
+OPTIONS=""
+EOF
+
+service isc-dhcp-relay restart
+```
+**Penjelasan**
+- `SERVERS` : IP address dari DHCP server pusat (contoh: 10.88.4.2).
+- `INTERFACES` : daftar interface yang akan menerima permintaan DHCP dari klien dan meneruskannya ke server DHCP.
+- `isc-dhcp-relay` : service yang berfungsi untuk meneruskan (relay) permintaan DHCP antar subnet.
+
+### 4. Amandil
+Amandil berperan sebagai client di subnet pertama (10.88.1.0/24).
+```
+ip addr flush dev eth0
+ip addr add 10.88.1.100/24 dev eth0
+ip link set eth0 up
+ip route add default via 10.88.1.1
+```
+**Penjelasan**
+- `ip addr flush dev eth0`: menghapus semua konfigurasi IP lama dari interface eth0.
+- `ip addr add`: menetapkan alamat IP baru (10.88.1.100) dengan subnet mask /24.
+- `ip route add default via`: menambahkan rute default melalui gateway 10.88.1.1 (router Durin).
+
+### 5. Gilgalad
+Gilgalad berada di subnet kedua (10.88.2.0/24) dengan konfigurasi yang mirip seperti Amandil.
+```
+ip addr flush dev eth0
+ip addr add 10.88.2.100/24 dev eth0
+ip link set eth0 up
+ip route add default via 10.88.2.1
+```
+**Penjelasan**
+- IP statis diatur menjadi 10.88.2.100/24.
+- Default gateway diarahkan ke 10.88.2.1 (Durin).
+
+### 6. Pengujian Koneksi dan DNS
+```
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+
+ping -c 3 10.88.1.1     
+ping -c 3 10.88.2.1     
+ping -c 3 192.168.122.1 
+
+apt-get update
+apt-get install isc-dhcp-client -y
+
+echo nameserver 10.88.5.2 > /etc/resolv.conf
+```
+**Penjelasan**
+- `echo nameserver 192.168.122.1`: menetapkan DNS sementara agar sistem bisa melakukan update paket (apt-get update).
+- `ping`: menguji konektivitas ke router dan gateway eksternal.
+- `isc-dhcp-client`: menginstal DHCP client agar host bisa mendapatkan IP otomatis dari server DHCP.
+- `echo nameserver 10.88.5.2`: mengubah konfigurasi DNS ke server DNS internal setelah semua sistem aktif.
+
 ## Soal 2
 Agar DHCP Server ter-set, di Aldarion konfigurasikan sebagai berikut.
 ```
@@ -328,6 +418,14 @@ EOF
 
 service isc-dhcp-server restart
 ```
+| Subnet       | Pengguna   | Rentang IP            | Gateway   | Lease Time | Keterangan            |
+| ------------ | ---------- | --------------------- | --------- | ---------- | --------------------- |
+| 10.88.1.0/24 | Amandil    | 10.88.1.6–34, 68–94   | 10.88.1.1 | 1800 s     | DHCP dinamis          |
+| 10.88.2.0/24 | Gilgalad   | 10.88.2.35–67, 96–121 | 10.88.2.1 | 600 s      | DHCP dinamis          |
+| 10.88.3.0/24 | Khamul     | (fixed) 10.88.3.95    | 10.88.3.1 | -          | IP statis via MAC     |
+| 10.88.4.0/24 | Relay Link | -                     | 10.88.4.1 | -          | Koneksi ke DHCP Relay |
+| 10.88.5.0/24 | DNS        | -                     | 10.88.5.1 | -          | Jaringan internal DNS |
+
 Dan agar ip dhcp dapat terforward ke subnet lain, diberikan dhcp relay sekaligus router berupa Durin.
 ```
 cat > /etc/default/isc-dhcp-relay << EOF
@@ -367,9 +465,56 @@ Amdir
 Gilgalad/Amandil
 <img width="995" height="1257" alt="image" src="https://github.com/user-attachments/assets/3252ec32-e482-4be9-8818-fc278e8bf042" />
 
+###
+```
+apt-get update && apt-get install bind9 bind9utils -y
+ln -s /etc/init.d/named /etc/init.d/bind9
+```
+**Penjelasan**
+- `apt-get install bind9 bind9utils -y` Menginstal BIND9, software server DNS yang paling umum di Linux, dan bind9utils berisi alat tambahan seperti `dig` dan `rndc`.
+- `ln -s /etc/init.d/named /etc/init.d/bind9` Membuat symlink agar service bisa dijalankan dengan perintah service bind9 start/restart, karena beberapa sistem mengenal service dengan nama `named`.
+
+```
+cat > /etc/bind/named.conf.options <<'EOF'
+options {
+    directory "/var/cache/bind";
+    dnssec-validation no;
+    forwarders { 192.168.122.1; };
+    allow-query { any; };
+    auth-nxdomain no;
+    listen-on-v6 { any; };
+};
+EOF
+```
+**Penjelasan**
+- `directory "/var/cache/bind";` Lokasi cache DNS.
+- `dnssec-validation no;` Mematikan DNSSEC validation agar lebih sederhana (kadang DNS lokal belum mendukung DNSSEC).
+- `forwarders { 192.168.122.1; };` DNS ini akan meneruskan semua query ke DNS eksternal (192.168.122.1) jika tidak bisa menjawab secara lokal. Biasanya ini adalah DNS dari host utama atau internet gateway (NAT).
+- `allow-query { any; };` Mengizinkan semua client melakukan permintaan DNS (tanpa batasan subnet).
+- `auth-nxdomain no;` Mengatur agar server tidak menyatakan dirinya sebagai authoritative jika domain tidak ditemukan.
+- `listen-on-v6 { any; };` Mengaktifkan DNS agar mendengarkan di semua interface IPv6.
+
+```
+cat > /etc/bind/named.conf.local <<EOF
+zone "jarkomK49.com" {
+    type forward;
+    forward only;
+    forwarders { 10.88.3.2; 10.88.3.3; };
+};
+EOF
+service bind9 restart
+```
+**Penjelasan**
+- `zone "jarkomK49.com"` Mendefinisikan domain lokal yang akan dikelola.
+- `type forward;` Menandakan bahwa server ini bukan authoritative, melainkan hanya meneruskan (forward) permintaan untuk domain ini ke server lain.
+- `forward only;` Semua query untuk domain ini hanya akan diteruskan, dan server ini tidak akan mencoba melakukan resolve sendiri.
+- `forwarders { 10.88.3.2; 10.88.3.3; };` Alamat IP server DNS utama yang menangani domain `jarkomK49.com`.
+- Biasanya IP tersebut adalah DNS master dan slave (misalnya: Tirion dan Valmar).
+
 ## Soal 4
 Erendis
 <img width="1185" height="1224" alt="Screenshot 2025-11-01 115528" src="https://github.com/user-attachments/assets/dc5d0bdc-8969-4a7c-a524-7993a6ba02fa" />
+
 
 Amdir
 <img width="1201" height="1222" alt="Screenshot 2025-11-01 115432" src="https://github.com/user-attachments/assets/da6007a0-a622-4871-9c58-f5411d268d50" />
