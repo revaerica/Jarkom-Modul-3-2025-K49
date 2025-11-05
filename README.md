@@ -60,11 +60,6 @@ up echo nameserver 192.168.122.1 > /etc/resolv.conf
 up apt-get update -y
 up apt-get install iptables isc-dhcp-relay -y
 up iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.88.0.0/16
-up sysctl net.ipv4.ip_forward=1
-up echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
-up service isc-dhcp-relay restart
-# DHCP_SERVERS="10.88.4.2"
-# INTERFACES="eth1 eth2 eth3 eth4 eth5"
 ```
 
 **Elendil**
@@ -75,7 +70,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.1.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Isildur**
@@ -86,7 +81,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.1.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Anarion**
@@ -97,7 +92,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.1.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Miriel**
@@ -108,7 +103,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.1.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Celebrimbor**
@@ -119,7 +114,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.2.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Elros**
@@ -130,7 +125,7 @@ iface eth0 inet static
     netmask 255.255.255.0
     gateway 10.88.1.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Pharazon**
@@ -141,7 +136,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.2.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Galadriel**
@@ -152,7 +147,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.2.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Celeborn**
@@ -163,7 +158,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.2.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Oropher**
@@ -174,7 +169,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.2.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Erendis**
@@ -185,7 +180,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.3.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Amdir**
@@ -196,7 +191,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.3.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Aldarion**
@@ -207,7 +202,7 @@ iface eth0 inet static
     netmask 255.255.255.0
     gateway 10.88.4.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Palantir**
@@ -218,7 +213,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.4.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Narvi**
@@ -229,7 +224,7 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 10.88.4.1
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Minastir**
@@ -250,7 +245,7 @@ up apt-get install bind9 nginx -y
 auto eth0
 iface eth0 inet dhcp
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Amandil**
@@ -258,7 +253,7 @@ up echo nameserver 10.88.5.2 > /etc/resolv.conf
 auto eth0
 iface eth0 inet dhcp
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 **Khamul**
@@ -271,7 +266,7 @@ iface eth0 inet dhcp
 
 hwaddress ether 02:42:92:bc:4c:00
 
-up echo nameserver 10.88.5.2 > /etc/resolv.conf
+up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 Amandil
@@ -281,7 +276,72 @@ Gilgalad
 <img width="1375" height="1225" alt="image" src="https://github.com/user-attachments/assets/1ed86e50-357f-4483-baee-6d1169559bf8" />
 
 ## Soal 2
+Agar DHCP Server ter-set, di Aldarion konfigurasikan sebagai berikut.
+```
+apt-get update && apt-get install isc-dhcp-server -y
 
+cat > /etc/default/isc-dhcp-server <<EOF
+INTERFACES="eth0"
+EOF
+
+cat > /etc/dhcp/dhcpd.conf <<EOF
+authoritative;
+max-lease-time 3600; 
+option domain-name-servers 10.88.5.2; 
+option domain-name "jarkomK49.com";
+
+subnet 10.88.1.0 netmask 255.255.255.0 {
+	range 10.88.1.6 10.88.1.34;
+	range 10.88.1.68 10.88.1.94;
+	option routers 10.88.1.1;
+	option broadcast-address 10.88.1.255;
+	default-lease-time 1800;
+}
+
+subnet 10.88.2.0 netmask 255.255.255.0 {
+	range 10.88.2.35 10.88.2.67;
+	range 10.88.2.96 10.88.2.121;
+	option routers 10.88.2.1;
+	option broadcast-address 10.88.2.255;
+	default-lease-time 600;
+}
+
+subnet 10.88.3.0 netmask 255.255.255.0 {
+	option routers 10.88.3.1;
+	option broadcast-address 10.88.3.255;
+	host Khamul {
+		hardware ethernet 02:42:92:bc:4c:00;
+		fixed-address 10.88.3.95;
+	}
+}
+
+subnet 10.88.4.0 netmask 255.255.255.0 {
+	option routers 10.88.4.1;
+	option broadcast-address 10.88.4.255;
+}
+
+subnet 10.88.5.0 netmask 255.255.255.0 {
+	option routers 10.88.5.1;
+	option broadcast-address 10.88.5.255;
+}
+EOF
+
+service isc-dhcp-server restart
+```
+Dan agar ip dhcp dapat terforward ke subnet lain, diberikan dhcp relay sekaligus router berupa Durin.
+```
+cat > /etc/default/isc-dhcp-relay << EOF
+SERVERS="10.88.4.2"  
+INTERFACES="eth1 eth2 eth3 eth4 eth5"
+OPTIONS=""
+EOF
+
+cat > /etc/sysctl.conf << EOF
+net.ipv4.ip_forward=1
+EOF
+
+service isc-dhcp-relay restart
+```
 Aldarion
 <img width="1254" height="1225" alt="image" src="https://github.com/user-attachments/assets/1886d9f2-8757-423f-94e7-04db696060ee" />
 
