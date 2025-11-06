@@ -270,9 +270,11 @@ up echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
 Amandil
+
 <img width="1725" height="1228" alt="image" src="https://github.com/user-attachments/assets/8d072242-1380-4771-8e7f-342f4a8edbd9" />
 
 Gilgalad
+
 <img width="1375" height="1225" alt="image" src="https://github.com/user-attachments/assets/1ed86e50-357f-4483-baee-6d1169559bf8" />
 
 ### 1. NAT dan Forwarding
@@ -1569,15 +1571,19 @@ Hasil akhirnya:
 ## Soal 12
 
 Galadriel
+
 <img width="926" height="447" alt="image" src="https://github.com/user-attachments/assets/2b98e398-1ee8-433d-a539-315293db67f7" />
 
 Celeborn
+
 <img width="942" height="445" alt="image" src="https://github.com/user-attachments/assets/d2ff3979-10d8-4727-99da-adeafa3c5362" />
 
 Oropher
+
 <img width="917" height="450" alt="image" src="https://github.com/user-attachments/assets/a3d0213d-30c2-4298-ae79-93572e29b787" />
 
 Amandil
+
 <img width="881" height="568" alt="image" src="https://github.com/user-attachments/assets/71cfb31a-1246-4e8f-b3e9-47c6165a0f62" />
 
 ### PHP Worker Setup dan Testing (Galadriel, Celeborn, Oropher)
