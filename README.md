@@ -1350,9 +1350,232 @@ Script ini memastikan bahwa:
 
 ## Soal 10
 
+<img width="1074" height="790" alt="image" src="https://github.com/user-attachments/assets/3b47bfea-0e80-42f0-8284-7ee34ef9b6f0" />
+
+### ⚙️ Elros – Nginx Load Balancer Setup
+Konfigurasi ini menjadikan **Elros (10.88.1.35)** sebagai **Load Balancer (Reverse Proxy)** yang mendistribusikan trafik HTTP ke tiga Laravel Worker:
+**Elendil (10.88.1.2:8001)**, **Isildur (10.88.1.3:8002)**, dan **Anarion (10.88.1.4:8003)** menggunakan metode **Round Robin**.
+
+---
+### 🧩 1. Menambahkan Domain ke `/etc/hosts`
+```bash
+echo "10.88.1.2 elendil.laravel.com" >> /etc/hosts
+echo "10.88.1.3 isildur.laravel.com" >> /etc/hosts
+echo "10.88.1.4 anarion.laravel.com" >> /etc/hosts
+```
+Menambahkan entri domain internal agar **Elros** dapat mengenali ketiga worker dengan nama host-nya.
+Dengan ini, akses bisa dilakukan melalui `elendil.laravel.com`, `isildur.laravel.com`, dan `anarion.laravel.com`.
+
+---
+### 🔧 2. Instalasi & Persiapan Nginx
+```bash
+apt-get update -y
+apt-get install -y nginx
+```
+Melakukan pembaruan repositori dan menginstal **Nginx**, yang akan digunakan sebagai **Load Balancer**.
+
+---
+### ⚙️ 3. Konfigurasi File Nginx
+```bash
+cat > /etc/nginx/sites-available/load-balancer <<'EOF'
+upstream kesatria_numenor {
+    server 10.88.1.2:8001;
+    server 10.88.1.3:8002;
+    server 10.88.1.4:8003;
+}
+
+server {
+    listen 80;
+    server_name 10.88.1.35;
+
+    location / {
+        proxy_pass http://kesatria_numenor;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    access_log /var/log/nginx/elros_access.log;
+    error_log /var/log/nginx/elros_error.log;
+}
+EOF
+```
+#### 🧠 Penjelasan:
+* **upstream kesatria_numenor** → mendefinisikan tiga backend server yang akan menerima request.
+* **server_name 10.88.1.35** → menggunakan IP Elros langsung agar stabil.
+* **proxy_pass http://kesatria_numenor** → meneruskan semua request dari client ke worker sesuai urutan Round Robin.
+* **proxy_set_header ...** → meneruskan informasi IP dan protokol pengguna ke backend agar log tetap akurat.
+
+---
+### 🔗 4. Mengaktifkan Load Balancer
+```bash
+ln -sf /etc/nginx/sites-available/load-balancer /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+```
+* Mengaktifkan konfigurasi **load-balancer**.
+* Menghapus konfigurasi default agar tidak bentrok.
+
+---
+### 🧪 5. Uji Konfigurasi & Restart
+```bash
+nginx -t
+service nginx restart
+```
+* `nginx -t` → mengecek apakah konfigurasi valid.
+* `service nginx restart` → memulai ulang layanan agar konfigurasi baru diterapkan.
+
+---
+### ✅ 6. Hasil Akhir
+```bash
+✅ Load Balancer berhasil dikonfigurasi di Elros (10.88.1.35)
+✅ Reverse Proxy aktif dengan algoritma Round Robin
+✅ Backend: 10.88.1.2:8001 | 10.88.1.3:8002 | 10.88.1.4:8003
+```
+Load Balancer kini aktif dan siap meneruskan request secara bergantian ke ketiga worker Laravel.
+
+---
+### 🧭 7. Pengujian dari Client
+```bash
+curl http://10.88.1.35/api/airing
+```
+Lakukan beberapa kali untuk melihat **rotasi worker (Round Robin)** — respon akan bergantian berasal dari Elendil, Isildur, dan Anarion.
+Jika setiap request menampilkan data berbeda (misalnya ID berbeda atau respon berganti), berarti load balancing bekerja dengan benar.
+
+---
+### 🧱 Kesimpulan
+Dengan konfigurasi ini:
+* **Elros** bertindak sebagai **reverse proxy & load balancer**.
+* **Traffic dibagi merata** antara tiga worker Laravel.
+* **Nginx logs** di `/var/log/nginx/elros_access.log` dapat digunakan untuk memantau distribusi trafik.
+* Sistem mendukung **high availability** dan **scalability** aplikasi Laravel di cluster ini.
+
 ## Soal 11
 
+<img width="1013" height="1236" alt="image" src="https://github.com/user-attachments/assets/db7678b8-1875-4c74-ae08-ce1e2f019a02" />
+
+### ⚔️ Benchmark Testing & Weighted Round Robin (Client: Amandil)
+Bagian ini dilakukan di **client node** (misalnya **Amandil**) untuk:
+1. Menguji performa **load balancer (Elros)** dengan Apache Benchmark.
+2. Melihat bagaimana trafik didistribusikan ke tiga worker dengan metode **Round Robin** dan **Weighted Round Robin**.
+
+---
+### 🧩 1. Persiapan Benchmark Tool
+```bash
+apt update -y
+apt install -y apache2-utils
+```
+Instal paket `apache2-utils` yang berisi tool **ab (Apache Benchmark)** — digunakan untuk melakukan pengujian performa HTTP.
+
+---
+### ⚙️ 2. Uji Awal – Round Robin
+```bash
+ab -n 100 -c 10 http://10.88.1.35/api/airing
+```
+* `-n 100` → jumlah total request sebanyak **100 kali**.
+* `-c 10` → **10 request dikirim secara bersamaan (concurrent)**.
+* Tujuan: melihat apakah **Elros** mampu mendistribusikan request ke semua worker dengan baik.
+
+---
+### 🧪 3. Uji Lanjutan – Round Robin
+```bash
+ab -n 2000 -c 100 http://10.88.1.35/api/airing
+```
+Simulasi **beban tinggi** dengan 2000 request dan 100 concurrent untuk menguji kestabilan load balancing.
+
+---
+### 📜 4. Melihat Log Distribusi di Elros
+```bash
+tail -n 20 /var/log/nginx/elros_access.log | grep "10.88.1"
+```
+Menampilkan 20 baris terakhir log akses dari **Nginx di Elros** untuk melihat IP backend mana yang menerima request.
+Jika Round Robin berjalan normal, distribusi IP `10.88.1.2`, `10.88.1.3`, dan `10.88.1.4` akan muncul bergantian secara merata.
+
+---
+### ⚖️ 5. Strategi Bertahan – Weighted Round Robin
+```bash
+cat > /etc/nginx/sites-available/load-balancer <<'EOF'
+upstream kesatria_numenor {
+    server 10.88.1.2 weight=3; # Elendil (lebih kuat)
+    server 10.88.1.3 weight=2; # Isildur
+    server 10.88.1.4 weight=1; # Anarion
+}
+
+server {
+    listen 80;
+    server_name 10.88.1.35;
+
+    location / {
+        proxy_pass http://kesatria_numenor;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    access_log /var/log/nginx/elros_access.log;
+    error_log /var/log/nginx/elros_error.log;
+}
+EOF
+```
+#### 🧠 Penjelasan:
+* **Weighted Round Robin** memberi bobot lebih besar ke server yang lebih kuat.
+  * Elendil → `weight=3`
+  * Isildur → `weight=2`
+  * Anarion → `weight=1`
+* Server dengan bobot lebih tinggi akan menerima lebih banyak request.
+
+---
+### 🔁 6. Terapkan Konfigurasi Baru
+```bash
+nginx -t && service nginx restart
+```
+* Mengecek validitas konfigurasi (`nginx -t`).
+* Memuat ulang Nginx agar **Weighted Round Robin** aktif.
+
+---
+### 🚀 7. Pengujian Ulang – Weighted Round Robin
+```bash
+ab -n 2000 -c 100 http://10.88.1.35/api/airing
+```
+Melakukan pengujian beban ulang dengan konfigurasi bobot baru.
+Hasilnya: **Elendil** akan menerima 3 kali lebih banyak request dibanding Anarion.
+
+---
+### 📊 8. Analisis Distribusi Request
+```bash
+tail -n 30 /var/log/nginx/elros_access.log | grep "10.88.1"
+```
+Periksa distribusi IP backend di log:
+* `10.88.1.2` harus muncul lebih sering (Elendil)
+* `10.88.1.3` sedang
+* `10.88.1.4` paling sedikit
+
+---
+### ✅ 9. Kesimpulan
+Setelah pengujian:
+* **Round Robin** → distribusi merata antar worker.
+* **Weighted Round Robin** → distribusi berdasarkan kekuatan server.
+* **Apache Benchmark** membantu menilai throughput dan respons time sistem.
+* Log di **Elros** menjadi bukti apakah load balancing berjalan sesuai strategi.
+
+Hasil akhirnya:
+```
+✅ Load Balancer optimal di bawah tekanan tinggi
+✅ Weighted Round Robin aktif dan efisien
+✅ Sistem siap untuk beban produksi
+```
+
 ## Soal 12
+
+Galadriel
+
+Celeborn
+
+Oropher
+
+Amandil
+
 
 ## Soal 13
 
