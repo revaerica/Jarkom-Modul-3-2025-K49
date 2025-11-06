@@ -1569,16 +1569,620 @@ Hasil akhirnya:
 ## Soal 12
 
 Galadriel
+<img width="926" height="447" alt="image" src="https://github.com/user-attachments/assets/2b98e398-1ee8-433d-a539-315293db67f7" />
 
 Celeborn
+<img width="942" height="445" alt="image" src="https://github.com/user-attachments/assets/d2ff3979-10d8-4727-99da-adeafa3c5362" />
 
 Oropher
+<img width="917" height="450" alt="image" src="https://github.com/user-attachments/assets/a3d0213d-30c2-4298-ae79-93572e29b787" />
 
 Amandil
+<img width="881" height="568" alt="image" src="https://github.com/user-attachments/assets/71cfb31a-1246-4e8f-b3e9-47c6165a0f62" />
 
+### PHP Worker Setup dan Testing (Galadriel, Celeborn, Oropher)
+Skrip ini digunakan untuk membangun tiga PHP worker (Galadriel, Celeborn, Oropher) dan satu client (Gilgalad/Amandil) untuk melakukan pengujian konektivitas PHP-FPM + Nginx.
+
+---
+### 1. Bagian Utama: Setup PHP Worker
+```bash
+# PHP WORKER SETUP (Galadriel, Celeborn, Oropher)
+```
+Bagian ini mendefinisikan **fungsi utama** untuk setup otomatis PHP worker.  
+Tiap worker menjalankan Nginx dan PHP-FPM di port berbeda (8004, 8005, 8006).
+
+---
+### 2. Fungsi `setup_php_worker()`
+```bash
+setup_php_worker() {
+    WORKER_NAME=$1
+    PORT=$2
+```
+Fungsi menerima dua parameter:
+- `$WORKER_NAME` → nama host (galadriel, celeborn, oropher)
+- `$PORT` → port yang digunakan oleh Nginx untuk tiap worker
+Fungsi ini akan menjalankan seluruh proses instalasi dan konfigurasi PHP-FPM + Nginx secara otomatis.
+
+---
+### 3. Konfigurasi DNS Resolver
+```bash
+echo "nameserver 10.88.5.2" > /etc/resolv.conf
+```
+Baris ini memastikan worker dapat melakukan **resolusi DNS** melalui IP nameserver `10.88.5.2` (biasanya IP mesin DNS atau router utama).
+
+---
+### 4. Instalasi Web Server dan PHP
+```bash
+apt-get update -y
+apt-get install -y nginx php-fpm php-cli -y
+```
+Melakukan pembaruan repositori dan menginstal:
+- `nginx` → web server utama
+- `php-fpm` → PHP FastCGI Process Manager (backend PHP)
+- `php-cli` → PHP command-line interface
+
+---
+### 5. Deteksi Otomatis Versi PHP-FPM
+```bash
+PHP_SOCK=$(find /var/run/php/ -name "php*-fpm.sock" | head -n1)
+if [ -z "$PHP_SOCK" ]; then
+    echo "⚠️ Tidak ditemukan socket PHP-FPM, mencoba start service..."
+    service php8.1-fpm start 2>/dev/null || service php8.4-fpm start 2>/dev/null || service php7.4-fpm start 2>/dev/null
+    PHP_SOCK=$(find /var/run/php/ -name "php*-fpm.sock" | head -n1)
+fi
+```
+Skrip ini **mendeteksi otomatis** versi PHP-FPM yang terpasang.  
+Jika socket `.sock` belum ditemukan, skrip mencoba menyalakan salah satu service (`php8.1-fpm`, `php8.4-fpm`, atau `php7.4-fpm`) agar kompatibel di semua VM.
+
+---
+### 6. Pembuatan Halaman PHP Uji
+```bash
+mkdir -p /var/www/html
+cat > /var/www/html/index.php <<'EOF'
+<?php
+$hostname = gethostname();
+echo "Hostname: $hostname\n";
+?>
+EOF
+```
+File `index.php` sederhana untuk menampilkan hostname dari worker.  
+Digunakan untuk memastikan bahwa request diarahkan ke server yang benar.
+
+---
+### 7. Konfigurasi Nginx untuk Tiap Worker
+```bash
+cat > /etc/nginx/sites-available/php-site <<EOF
+server {
+    listen $PORT;
+    server_name $WORKER_NAME.jarkomK49.com;
+    root /var/www/html;
+
+    index index.php index.html index.htm;
+
+    location ~ \.php\$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:$PHP_SOCK;
+    }
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+}
+
+# Block IP access langsung
+server {
+    listen $PORT default_server;
+    server_name _;
+    return 444;
+}
+EOF
+```
+Konfigurasi ini:
+- **`listen $PORT`** → setiap worker mendengarkan port unik.
+- **`server_name`** → sesuai nama domain (galadriel, celeborn, oropher).
+- **`fastcgi_pass`** → menggunakan PHP socket yang terdeteksi otomatis.
+- **Block IP access** → menolak akses langsung lewat IP (return code `444`).
+
+---
+### 8. Aktivasi Konfigurasi Nginx
+```bash
+ln -sf /etc/nginx/sites-available/php-site /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+
+nginx -t && service nginx restart
+```
+Langkah ini:
+- Menautkan file konfigurasi ke folder aktif Nginx.
+- Menghapus default config agar tidak bentrok.
+- Melakukan **test konfigurasi (`nginx -t`)** dan restart Nginx.
+
+---
+### 9. Menjalankan Fungsi untuk Tiap Worker
+```bash
+setup_php_worker "galadriel" 8004
+setup_php_worker "celeborn" 8005
+setup_php_worker "oropher" 8006
+```
+Ketiga perintah ini menjalankan fungsi `setup_php_worker()` untuk tiap worker.  
+Hasil akhirnya:
+- `galadriel.jarkomK49.com` → port 8004  
+- `celeborn.jarkomK49.com` → port 8005  
+- `oropher.jarkomK49.com` → port 8006  
+
+---
+### 10. Bagian Client (Gilgalad / Amandil)
+```bash
+echo "=========================================="
+echo "        TESTING PHP WORKERS (CLIENT)"
+echo "=========================================="
+```
+Bagian ini dijalankan pada mesin **client** untuk mengetes apakah tiap worker dapat diakses melalui HTTP.
+
+---
+### 11. Konfigurasi DNS di Client
+```bash
+cat > /etc/resolv.conf <<EOF
+nameserver 10.88.5.2
+EOF
+```
+Agar client dapat memetakan domain `*.jarkomK49.com` ke IP masing-masing worker melalui nameserver `10.88.5.2`.
+
+---
+### 12. Instalasi Tools Testing
+```bash
+apt-get update -y
+apt-get install -y lynx curl -y
+```
+Menginstal:
+- `lynx` → browser berbasis teks untuk menampilkan output web sederhana.
+- `curl` → alternatif testing jika `lynx` gagal.
+
+---
+### 13. Loop Testing ke Semua Worker
+```bash
+for worker in galadriel celeborn oropher; do
+    case $worker in
+        galadriel) port=8004 ;;
+        celeborn)  port=8005 ;;
+        oropher)   port=8006 ;;
+    esac
+
+    echo ""
+    echo "=== Testing $worker ==="
+    if ! lynx -dump http://$worker.jarkomK49.com:$port; then
+        echo "⚠️ Lynx gagal, coba dengan curl:"
+        curl -v http://$worker.jarkomK49.com:$port
+    fi
+done
+```
+Loop ini menguji konektivitas ke semua worker:
+1. Menentukan port masing-masing.
+2. Menguji koneksi menggunakan `lynx`.
+3. Jika gagal, otomatis mencoba `curl`.
+
+Hasil sukses akan menampilkan:
+```
+Hostname: galadriel
+```
+
+---
+### 14. Output Akhir
+```bash
+echo "=========================================="
+echo "              COMPLETE!"
+echo "=========================================="
+```
+Menandakan semua proses setup dan pengujian telah selesai.  
+Jika semua berjalan normal, tiap worker akan menjawab dengan hostname-nya masing-masing.
+
+---
+### Kesimpulan
+- Men-setup tiga PHP worker secara otomatis (Galadriel, Celeborn, Oropher).
+- Menyesuaikan versi PHP-FPM secara **dinamis (auto-detect)**.
+- Menggunakan Nginx sebagai web server dengan port unik.
+- Dilengkapi sistem **testing client otomatis** untuk memverifikasi konektivitas.
+- Aman karena akses langsung via IP diblok (return 444).
+
+---
 
 ## Soal 13
+<img width="995" height="1230" alt="image" src="https://github.com/user-attachments/assets/56d9f511-e64e-4035-8e61-81ea60d62426" />
+
+### Pharazon Load Balancer Setup – Penjelasan Step by Step
+### Header & Info Setup
+```bash
+echo "PHARAZON - PHP LOAD BALANCER SETUP"
+```
+* Memberi informasi bahwa skrip sedang men-setup Pharazon (load balancer).
+
+---
+### Menambahkan Domain Worker ke /etc/hosts
+```bash
+cat >> /etc/hosts <<EOF
+10.88.2.6 galadriel.jarkomK49.com
+10.88.2.5 celeborn.jarkomK49.com
+10.88.2.4 oropher.jarkomK49.com
+EOF
+```
+* Agar Pharazon bisa resolve domain worker ke IP internal.
+* `>>` → menambahkan tanpa menghapus isi file sebelumnya.
+
+---
+### Mengatur DNS Resolver Lokal
+```bash
+echo "nameserver 10.88.5.2" > /etc/resolv.conf
+```
+* Menggunakan DNS server internal untuk resolusi domain worker.
+* `>` → overwrite file sebelumnya.
+
+---
+### Install Paket yang Dibutuhkan
+```bash
+apt-get update -y
+apt-get install -y nginx dnsutils curl lynx
+```
+* **nginx** → web server/load balancer
+* **dnsutils** → tools DNS (`dig`, `nslookup`)
+* **curl & lynx** → untuk testing HTTP
+
+---
+### Mengecek Resolusi Domain Worker
+```bash
+for host in galadriel.jarkomK49.com celeborn.jarkomK49.com oropher.jarkomK49.com; do
+    ip=$(dig +short $host)
+    if [ -z "$ip" ]; then
+        echo "⚠️ Tidak bisa resolve $host"
+    else
+        echo "✅ $host -> $ip"
+    fi
+done
+```
+* Loop tiap worker untuk memastikan domain dapat di-resolve ke IP.
+* Kosong → error, ada → OK.
+
+---
+### Konfigurasi Nginx Load Balancer
+```nginx
+upstream taman_peri {
+    server galadriel.jarkomK49.com:8004;
+    server celeborn.jarkomK49.com:8005;
+    server oropher.jarkomK49.com:8006;
+}
+
+server {
+    listen 80;
+    server_name pharazon.jarkomK49.com;
+
+    location / {
+        proxy_pass http://taman_peri;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    access_log /var/log/nginx/pharazon_access.log;
+    error_log /var/log/nginx/pharazon_error.log;
+}
+
+server {
+    listen 80 default_server;
+    server_name _;
+    return 444;
+}
+```
+* **upstream `taman_peri`** → backend worker (Round Robin default).
+* **server block utama** → forward request domain ke upstream.
+* **default server** → return 444 jika akses langsung via IP.
+
+---
+### Aktifkan Konfigurasi & Restart Nginx
+```bash
+ln -sf /etc/nginx/sites-available/php-load-balancer /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+nginx -t && systemctl restart nginx
+```
+* Aktifkan konfigurasi load balancer.
+* Hapus default server.
+* Test konfigurasi & restart nginx.
+
+---
+### Info Load Balancer Siap
+```bash
+echo "Domain       : pharazon.jarkomK49.com"
+echo "Algoritma    : Round Robin (default)"
+echo "Backend      :"
+echo "  - galadriel.jarkomK49.com:8004"
+echo "  - celeborn.jarkomK49.com:8005"
+echo "  - oropher.jarkomK49.com:8006"
+```
+* Memberikan ringkasan informasi load balancer & backend.
+
+--
+### Testing Worker
+* **Via domain** → harus berhasil.
+* **Via IP langsung** → harus ditolak.
+```bash
+curl http://galadriel.jarkomK49.com:8004
+curl -v http://10.88.2.6:8004
+```
+
+---
+### Testing Load Balancer Pharazon
+* **Round Robin test**: Request berulang ke `pharazon.jarkomK49.com`
+* **IP langsung Pharazon** → harus ditolak (return 444).
+```bash
+for i in {1..6}; do
+    curl http://pharazon.jarkomK49.com
+done
+
+curl -v http://10.88.2.2
+```
+
+---
+### Hasil Testing
+* ✅ Akses via domain worker → tampil hostname masing-masing
+* ✅ Akses via IP worker → ditolak
+* ✅ Akses via pharazon.jarkomK49.com → round robin antar 3 worker
+* ✅ Akses via IP Pharazon → ditolak
+
+---
 
 ## Soal 14
 
+### PHP Workers Basic Authentication Setup – Galadriel, Celeborn, Oropher & Pharazon
+### 1. Header & Info
+```bash
+echo "ADDING BASIC HTTP AUTHENTICATION"
+```
+* Memberi info bahwa skrip menambahkan Basic Auth pada worker PHP.
+
+---
+### 2. Install Apache2-utils
+```bash
+apt-get update
+apt-get install -y apache2-utils
+```
+* Paket ini menyediakan `htpasswd` untuk membuat file username/password.
+
+---
+### 3. Membuat Username & Password
+```bash
+htpasswd -bc /etc/nginx/.htpasswd noldor silvan
+```
+* `-b` → pass secara batch (langsung dari command line)
+* `-c` → membuat file baru
+* User: noldor, Password: silvan
+
+---
+### 4. Konfigurasi Nginx Worker
+Contoh untuk Galadriel:
+```nginx
+server {
+    listen 8004;
+    server_name galadriel.jarkomK49.com;
+    root /var/www/html;
+    
+    index index.php index.html index.htm;
+
+    auth_basic "Restricted Access - Taman Peri";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.4-fpm.sock;
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+
+server {
+    listen 8004 default_server;
+    server_name _;
+    return 444;
+}
+```
+* `auth_basic` → aktifkan HTTP Basic Authentication
+* `auth_basic_user_file` → file yang menyimpan user/pass
+* `default_server` → menolak akses IP langsung
+
+> Sama diterapkan untuk Celeborn (8005) dan Oropher (8006)
+
+---
+### 5. Restart Nginx Setelah Konfigurasi
+```bash
+nginx -t
+service nginx restart
+```
+* `nginx -t` → test konfigurasi
+* Restart nginx agar perubahan berlaku
+
+---
+### 6. Update Pharazon Load Balancer
+```nginx
+location / {
+    proxy_pass http://taman_peri;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    # Pass authentication headers
+    proxy_set_header Authorization $http_authorization;
+    proxy_pass_header Authorization;
+}
+```
+* Agar Basic Auth diteruskan dari client ke worker.
+
+---
+### 7. Testing Authentication
+#### a. Setup DNS di Client
+```bash
+cat > /etc/resolv.conf <<EOF
+nameserver 10.88.3.2
+nameserver 10.88.3.3
+EOF
+```
+
+#### b. Install tools
+```bash
+apt-get update
+apt-get install -y lynx curl
+```
+
+#### c. Test Tanpa Credentials (gagal)
+```bash
+curl http://galadriel.jarkomK49.com:8004
+```
+
+#### d. Test Dengan Credentials (berhasil)
+```bash
+curl -u noldor:silvan http://galadriel.jarkomK49.com:8004
+```
+
+#### e. Test Load Balancer dengan Auth
+```bash
+for i in {1..3}; do
+    curl -u noldor:silvan http://pharazon.jarkomK49.com
+done
+```
+
+#### f. Test menggunakan Lynx
+```bash
+lynx -auth=noldor:silvan -dump http://pharazon.jarkomK49.com
+```
+
+---
+#### 8. Hasil
+* Basic Auth aktif di semua worker
+* Credentials: noldor / silvan
+* Authentication diteruskan melalui load balancer
+* Unauthorized access ditolak (return 401)
+
+---
+
 ## Soal 15
+
+### X-Real-IP Setup - Taman Peri
+### 1. Start Environment
+```bash
+echo "=========================================="
+echo "   STARTING X-REAL-IP ENVIRONMENT"
+echo "=========================================="
+```
+> Awal mula Nginx siap dimulai!
+
+---
+### 2. Menyalakan Worker Nginx
+#### Galadriel
+```bash
+echo "=== Starting Galadriel ==="
+service nginx start
+```
+* Worker pertama kita, siap menerima visitor.
+* Nginx hidup, jangan lupa minum kopi.
+
+#### Celeborn
+```bash
+echo "=== Starting Celeborn ==="
+service nginx start
+```
+* Worker kedua, siap menerima request.
+* Masih santai, tapi jangan telat.
+
+#### Oropher
+```bash
+echo "=== Starting Oropher ==="
+service nginx start
+```
+* Worker ketiga, nge-handle traffic.
+* Semua worker udah ready, tinggal kita lempar request.
+
+---
+### 3. Menyalakan Load Balancer (Pharazon)
+```bash
+echo "=== Starting Pharazon Load Balancer ==="
+service nginx start
+```
+* LB ini kayak traffic cop. Mastiin semua request diarahkan ke worker yang bener.
+* Bisa nge-rotate, bisa nge-run
+---
+### 4. Mengecek Status Nginx
+```bash
+echo "=== Checking Nginx Status ==="
+systemctl status nginx | grep "active"
+```
+* Biar nggak bingung, ini ngecek siapa yang masih hidup.
+* Kalau nggak muncul `active`, berarti worker lagi tidur.
+
+---
+### 5. Konfigurasi DNS di Client
+```bash
+cat > /etc/resolv.conf <<EOF
+nameserver 10.88.3.2
+nameserver 10.88.3.3
+EOF
+```
+* Supaya client tahu ke mana harus jalanin request.
+* Kalau nggak dikasih ini, nama server cuma mitos belaka.
+
+---
+### 6. Install Tools di Client
+```bash
+apt-get update
+apt-get install -y curl lynx
+```
+* Curl buat ngetes HTTP.
+* Lynx buat nostalgia browsing ala 90-an.
+
+---
+### 7. Test Direct Access ke Worker
+#### Galadriel
+```bash
+curl -u noldor:silvan http://galadriel.jarkomK49.com:8004
+```
+
+#### Celeborn
+```bash
+curl -u noldor:silvan http://celeborn.jarkomK49.com:8005
+```
+
+#### Oropher
+```bash
+curl -u noldor:silvan http://oropher.jarkomK49.com:8006
+```
+> Semua harus menampilkan IP visitor yang bener-bener asli. Kalau salah, berarti Nginx lagi bohong.
+
+---
+### 8. Test via Load Balancer (Pharazon)
+```bash
+for i in {1..3}; do
+    echo ""
+    echo "Request #$i:"
+    curl -u noldor:silvan http://pharazon.jarkomK49.com
+done
+```
+* Request digilir ke 3 worker.
+* Visitor IP tetap muncul. Nggak boleh ngilang, meskipun LB kayak tukang pos.
+
+---
+### 9. Cek IP Client
+```bash
+ip addr show eth0 | grep "inet " | awk '{print "Client IP: " $2}'
+```
+* Buat verifikasi, biar kita nggak tersesat.
+* Kalau IPnya cocok sama yang ditampilkan di worker, berarti script sukses.
+
+---
+### 10. Test Pakai Lynx
+```bash
+lynx -auth=noldor:silvan -dump http://pharazon.jarkomK49.com
+```
+* Browsing ala retro, tapi tetap bisa lihat IP dan hostname.
+
+* Semua worker sudah punya **X-Real-IP**.
+* Visitor IP ditampilkan di PHP.
+* LB (Pharazon) nerusin IP asli.
+* Worker menunjukkan info visitor yang bener-bener nyata.
