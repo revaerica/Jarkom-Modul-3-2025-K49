@@ -512,7 +512,7 @@ service bind9 restart
 - `forward only;` Semua query untuk domain ini hanya akan diteruskan, dan server ini tidak akan mencoba melakukan resolve sendiri.
 - `forwarders { 10.88.3.2; 10.88.3.3; };` Alamat IP server DNS utama yang menangani domain `jarkomK49.com`.
 - Biasanya IP tersebut adalah DNS master dan slave (misalnya: Tirion dan Valmar).
-
+Terakhir, ubah resolver di semua node (kecuali durin sebagai router, dan minastir sebagai DNS Forwarder) menjadi `nameserver 10.88.5.2` di `/etc/resolv.conf` agar semua node tersambung ke internet hanya dengan melewati Minastir terlebih dahulu.
 ## Soal 4
 Erendis
 <img width="1185" height="1224" alt="Screenshot 2025-11-01 115528" src="https://github.com/user-attachments/assets/dc5d0bdc-8969-4a7c-a524-7993a6ba02fa" />
@@ -862,6 +862,26 @@ Gilgalad
 
 Amandil
 <img width="806" height="400" alt="image" src="https://github.com/user-attachments/assets/12c4fce4-b382-4228-afe5-e9e371edd5a2" />
+
+### File `/etc/dhcp/dhcpd.conf`
+```
+subnet 10.88.1.0 netmask 255.255.255.0 {
+	range 10.88.1.6 10.88.1.34;
+	range 10.88.1.68 10.88.1.94;
+	option routers 10.88.1.1;
+	option broadcast-address 10.88.1.255;
+	default-lease-time 1800;
+}
+
+subnet 10.88.2.0 netmask 255.255.255.0 {
+	range 10.88.2.35 10.88.2.67;
+	range 10.88.2.96 10.88.2.121;
+	option routers 10.88.2.1;
+	option broadcast-address 10.88.2.255;
+	default-lease-time 600;
+}
+```
+subnet 10.88.1.0 lease time (waktu penyewaan) selama setengah jam (1800 detik). Subnet 10.88.2.0 lease time (waktu penyewaan) selama sepersepuluh jam (600 detik).
 
 ### File `/var/lib/dhcp/dhcpd.leases`
 - File ini digunakan oleh DHCP server (misalnya ISC-DHCP) untuk menyimpan data tentang IP yang sudah diberikan (leased) ke klien.
