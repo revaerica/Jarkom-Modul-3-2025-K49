@@ -3,19 +3,35 @@ echo "=========================================="
 echo "   PHARAZON - PHP LOAD BALANCER SETUP"
 echo "=========================================="
 
+cat >> /etc/hosts <<EOF
+10.88.2.6 galadriel.jarkomK49.com
+10.88.2.5 celeborn.jarkomK49.com
+10.88.2.4 oropher.jarkomK49.com
+EOF
+
 echo "nameserver 10.88.5.2" > /etc/resolv.conf
 
-apt-get update
-apt-get install -y nginx
+apt-get update -y
+apt-get install -y nginx dnsutils curl lynx -y
+
+echo ""
+echo "🔍 Mengecek resolusi domain worker..."
+for host in galadriel.jarkomK49.com celeborn.jarkomK49.com oropher.jarkomK49.com; do
+    ip=$(dig +short $host)
+    if [ -z "$ip" ]; then
+        echo "⚠️ Tidak bisa resolve $host"
+    else
+        echo "✅ $host -> $ip"
+    fi
+done
 
 cat > /etc/nginx/sites-available/php-load-balancer <<'EOF'
 upstream taman_peri {
-    server 10.88.2.6:8004;
-    server 10.88.2.5:8005; 
-    server 10.88.2.4:8006; 
+    server galadriel.jarkomK49.com:8004;
+    server celeborn.jarkomK49.com:8005;
+    server oropher.jarkomK49.com:8006;
 }
 
-# Server utama: Pharazon
 server {
     listen 80;
     server_name pharazon.jarkomK49.com;
@@ -32,7 +48,6 @@ server {
     error_log /var/log/nginx/pharazon_error.log;
 }
 
-# Block IP access langsung tanpa domain
 server {
     listen 80 default_server;
     server_name _;
@@ -43,54 +58,67 @@ EOF
 ln -sf /etc/nginx/sites-available/php-load-balancer /etc/nginx/sites-enabled/
 rm -f /etc/nginx/sites-enabled/default
 
-nginx -t
-service nginx restart
+nginx -t && systemctl restart nginx
 
 echo ""
 echo "=========================================="
-echo "   PHARAZON LOAD BALANCER READY!"
+echo "   ✅ PHARAZON LOAD BALANCER READY!"
 echo "=========================================="
-echo "✅ Domain : pharazon.jarkomK49.com"
-echo "✅ Algoritma : Round Robin (default)"
-echo "✅ Backend Workers:"
-echo "   - Galadriel (10.88.2.6:8004)"
-echo "   - Celeborn  (10.88.2.5:8005)"
-echo "   - Oropher   (10.88.2.4:8006)"
+echo "Domain       : pharazon.jarkomK49.com"
+echo "Algoritma    : Round Robin (default)"
+echo "Backend      :"
+echo "  - galadriel.jarkomK49.com:8004"
+echo "  - celeborn.jarkomK49.com:8005"
+echo "  - oropher.jarkomK49.com:8006"
+echo ""
 
-# Testing dari Client
+# Amandil/Gilgalad
 echo ""
 echo "=========================================="
-echo "   TESTING PHARAZON LOAD BALANCER"
+echo "   🔍 TESTING WORKER DAN LOAD BALANCER"
 echo "=========================================="
 
-# CONSOLE: CLIENT (Gilgalad / Amandil)
-cat > /etc/resolv.conf <<EOF
-nameserver 10.88.5.2
-EOF
+echo "nameserver 10.88.5.2" > /etc/resolv.conf
+apt-get install -y curl lynx -y
 
-apt-get update
-apt-get install -y lynx curl
+for worker in galadriel celeborn oropher; do
+    case $worker in
+        galadriel) ip=10.88.2.6; port=8004 ;;
+        celeborn)  ip=10.88.2.5; port=8005 ;;
+        oropher)   ip=10.88.2.4; port=8006 ;;
+    esac
+
+    echo ""
+    echo "=== Testing $worker ==="
+    echo "- via DOMAIN:"
+    curl -s http://$worker.jarkomK49.com:$port || echo "⚠️ Gagal (domain)"
+    echo ""
+    echo "- via IP LANGSUNG (harus DITOLAK):"
+    curl -v http://$ip:$port || echo "⚠️ Gagal (ip, expected)"
+done
 
 echo ""
-echo "=== Test: akses via lynx ==="
-lynx -dump http://pharazon.jarkomK49.com
+echo "=========================================="
+echo "   ✅ TESTING LOAD BALANCER PHARAZON"
+echo "=========================================="
 
-echo ""
-echo "=== Test: Multiple requests (Round Robin) ==="
+echo "- Akses lewat domain (harus BERHASIL & Round Robin):"
 for i in {1..6}; do
     echo "Request #$i:"
-    curl -s http://pharazon.jarkomK49.com
+    curl -s http://pharazon.jarkomK49.com || echo "⚠️ Gagal ambil response!"
     echo ""
 done
 
 echo ""
-echo "Expected: Hostname harus berganti antara Galadriel, Celeborn, dan Oropher"
+echo "- Akses via IP langsung Pharazon (harus DITOLAK):"
+curl -v http://10.88.2.2 || echo "⚠️ DITOLAK (expected)"
 
 echo ""
 echo "=========================================="
-echo "   NOMOR 13 COMPLETE!"
+echo "   🧾 HASIL TESTING"
 echo "=========================================="
-echo ""
-echo "✅ Load Balancer configured"
-echo "✅ Round Robin aktif"
-echo "✅ Requests didistribusikan ke semua worker"
+echo "✅ Akses via domain worker: Harus tampil hostname (Galadriel, Celeborn, Oropher)"
+echo "✅ Akses via IP worker: Harus ditolak (return 444 / Empty reply)"
+echo "✅ Akses via pharazon.jarkomK49.com: Round robin antara 3 worker"
+echo "✅ Akses via IP Pharazon: Harus ditolak (return 444)"
+echo "=========================================="
