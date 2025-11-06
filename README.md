@@ -877,6 +877,16 @@ Masing-masing worker akan menjalankan **Nginx + PHP-FPM + Laravel App** dan diak
 
 ---
 ### 1. Struktur Utama Script
+
+Elendil
+<img width="1131" height="920" alt="image" src="https://github.com/user-attachments/assets/03d96cd7-ce59-41af-918e-9bd0efffe944" />
+
+Isildur
+<img width="1007" height="910" alt="image" src="https://github.com/user-attachments/assets/170999cc-acd9-41e1-9e43-031468fa5edb" />
+
+Anarion
+<img width="1024" height="904" alt="image" src="https://github.com/user-attachments/assets/801fc543-b4b9-4f5f-b927-7e8dfb45e80c" />
+
 ```bash
 #!/bin/bash
 
@@ -998,6 +1008,8 @@ Menampilkan hasil akhir bahwa node Laravel sudah siap diakses melalui browser.
 ---
 ### 8. Testing dari Client (Amandil atau Gilgalad)
 
+<img width="1024" height="884" alt="image" src="https://github.com/user-attachments/assets/3567ed89-bf6b-471d-ae46-e6a2b21022c1" />
+
 ```bash
 apt install -y lynx -y
 
@@ -1038,6 +1050,8 @@ Dokumen ini menjelaskan konfigurasi **Palantir** sebagai **database server (Mari
 
 ---
 ### 1. Konfigurasi Palantir (Database Server)
+
+<img width="982" height="761" alt="image" src="https://github.com/user-attachments/assets/657d2379-a5fa-454c-86fc-25730bff2e4f" />
 
 ```bash
 echo "=========================================="
@@ -1090,6 +1104,16 @@ Looping sederhana untuk memastikan database benar-benar aktif dan dapat diakses 
 
 ---
 ### 2. Konfigurasi Laravel Worker (Elendil, Isildur, Anarion)
+
+Elendil
+<img width="1190" height="1169" alt="image" src="https://github.com/user-attachments/assets/d83acbe1-3579-477b-87b5-71fc4a940409" />
+
+Isildur
+<img width="1039" height="866" alt="image" src="https://github.com/user-attachments/assets/804f0619-97b2-43f6-a699-037e66c7aade" />
+
+Anarion
+<img width="992" height="866" alt="image" src="https://github.com/user-attachments/assets/72709ced-bfc5-456f-bb67-9af8e579bd04" />
+
 ```bash
 setup_worker() {
     WORKER_NAME=$1
@@ -1193,6 +1217,9 @@ lynx -dump http://anarion.laravel.com:8003 | head -n 10
 
 ---
 ### 4. Hasil Akhir
+
+<img width="1110" height="1113" alt="image" src="https://github.com/user-attachments/assets/2bda7c1a-1e27-4c32-ad2f-ac7e79ac4af9" />
+
 ```
 ==========================================
 ✅ SEMUA WORKER TERKONFIGURASI
@@ -1217,6 +1244,8 @@ lynx -dump http://anarion.laravel.com:8003 | head -n 10
 ### Testing Individual Laravel Workers
 Script ini digunakan untuk **mengujikan konektivitas dan fungsionalitas Laravel Worker** satu per satu (Elendil, Isildur, dan Anarion).
 Testing dilakukan melalui **domain internal dan port spesifik** untuk memastikan setiap worker dapat menampilkan halaman utama serta endpoint API `/api/airing`.
+
+<img width="1076" height="1104" alt="image" src="https://github.com/user-attachments/assets/d6cacc4c-ef81-48fb-9833-7bba910f9aa9" />
 
 ---
 ### 1. Struktur Utama Script
